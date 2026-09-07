@@ -1,4 +1,4 @@
-name: Render Video
+ooname: Render Video
 
 on:
   workflow_dispatch:
@@ -24,8 +24,8 @@ jobs:
 
       - name: Extract project ZIP
         run: |
-          unzip -o First_Step_Learner_60_Minute_Remotion_Project.zip -d extracted_folder
-          cp -r extracted_folder/First_Step_Learner_60_Minute_Project/* ./
+           unzip -o First_Step_Learner_60_Minute_Remotion_Project.zip -d extracted_folder
+           cp -r extracted_folder/First_Step_Learner_60_Minute_Project/* ./
     
       - uses: actions/setup-node@v4
         with:
@@ -35,10 +35,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install system dependencies
+      - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg libnss3 libatk-bridge2.0-0 libgtk-3-0 libgbm1 libasound2
+           npm install
+           npx remotion browser ensure
 
       - name: Install Python dependencies
         run: pip install pydub mutagen edge-tts
