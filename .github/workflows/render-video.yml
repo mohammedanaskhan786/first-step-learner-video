@@ -1,4 +1,4 @@
-ooname: Render Video
+name: Render Video
 
 on:
   workflow_dispatch:
