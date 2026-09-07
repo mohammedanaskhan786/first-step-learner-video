@@ -1,4 +1,4 @@
-name: Render First Step Learner Video
+name: Render Video
 
 on:
   push:
@@ -16,14 +16,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
-      - name: Extract project ZIP
-        run: |
-          unzip -o First_Step_Learner_60_Minute_Remotion_Project.zip -d extracted_folder
-          cp -r extracted_folder/First_Step_Learner_60_Minute_Project/* ./
-
-      - name: Install dependencies
+      - name: Install dependencies & Ensure Browser
         run: |
           npm install
           npx remotion browser ensure
@@ -31,4 +25,4 @@ jobs:
       - name: Render Video
         run: |
           npm run build
-
+          
