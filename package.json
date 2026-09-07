@@ -4,9 +4,10 @@
   "description": "First Step Learner Cinematic Educational Video",
   "private": true,
   "scripts": {
-    "start": "remotion studio",
-    "build": "remotion render Root out/video.mp4"
-  },
+  "start": "remotion studio",
+  "build": "remotion render Remotion/index.ts FirstStepLearner out/video.mp4"
+  }
+  
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
