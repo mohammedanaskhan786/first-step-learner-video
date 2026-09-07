@@ -22,10 +22,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Unzip pipeline
+      - name: Extract project ZIP
         run: |
-          unzip -q first-step-learner-pipeline.zip
-          cp -r first-step-learner-pipeline/* .
+         unzip -o First_Step_Learner_60_Minute_Remotion_Project.zip
+         cp -r First_Step_Learner_60_Minute_Project/* .
+         cp -r First_Step_Learner_60_Minute_Project/.[!.]* . 2>/dev/null
+         || true
 
       - uses: actions/setup-node@v4
         with:
