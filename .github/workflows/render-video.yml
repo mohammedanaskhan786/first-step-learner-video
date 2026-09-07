@@ -24,5 +24,6 @@ jobs:
 
       - name: Render Video
         run: |
-          npm run build
+           npx remotion render remotion/index.ts FirstStepLearner out/video.mp4
+    
           
