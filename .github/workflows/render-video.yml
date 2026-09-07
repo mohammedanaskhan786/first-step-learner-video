@@ -21,12 +21,12 @@ jobs:
     timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
-      
-          - name:Unzip pipeline
-            run:|
+
+      - name: Unzip pipeline
+        run: |
           unzip -q first-step-learner-pipeline.zip
           cp -r first-step-learner-pipeline/* .
-    
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
