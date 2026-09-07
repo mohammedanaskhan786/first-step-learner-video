@@ -1,0 +1,230 @@
+[TITLE]
+AI Seekho, Zindagi Aasan Banao — Complete Beginner Guide
+
+[TEXT]
+Namaste dosto, First Step Learner mein aapka swagat hai. Aaj hum ek ghante mein AI ki poori duniya samjhenge. Na koi technical jargon, na koi coding, sirf practical cheezein jo aap aaj hi apni zindagi aur kaam mein use kar sakte ho.
+
+[TEXT]
+Pichle do saal mein AI itni tezi se badla hai ki jo log ise sahi tarike se use karna seekh gaye, unka kaam, padhai, aur career sab kuch aasan ho gaya. Aur jo log abhi bhi confuse hain, wo peeche reh rahe hain. Ye video bilkul unke liye hai jo AI ko shuruaat se, sahi tarike se seekhna chahte hain.
+
+[CARD]
+Is video mein hum seekhenge: AI kaise kaam karta hai, sahi prompt kaise likhein, roz-mara ke kaam mein AI kaise use karein, aur AI ki galtiyon se kaise bachein.
+
+[TITLE]
+Chapter 1: AI Asal Mein Hai Kya?
+
+[TEXT]
+Sabse pehle ek simple sach samajh lo. AI koi jaadu nahi hai, aur na hi ye koi insaan jaisa sochta hai. AI, jaise ChatGPT ya Gemini, actually ek bahut bada pattern-matching system hai. Isne internet ka bahut sara text padha hai, aur ab jab aap koi sawal poochte ho, ye predict karta hai ki agla sabse sahi shabd kya hona chahiye.
+
+[TEXT]
+Ise aise samjho — jaise aapke phone ka keyboard jab aap type karte ho to agla word suggest karta hai, waise hi AI bhi kaam karta hai, bas bahut zyada powerful tarike se. Ye ek time mein ek word predict karta hai, aur poora paragraph bana deta hai jo dikhta hai jaise kisi insaan ne likha ho.
+
+[CARD]
+Yaad rakho: AI ko "sach" pata nahi hota. Ye sirf patterns dekh kar sabse likely jawab deta hai. Isliye kabhi kabhi ye galat jawab bhi bahut confidence ke saath de sakta hai.
+
+[TEXT]
+Ye samajhna bahut zaroori hai kyunki isse aapko pata chalega ki AI se kaam kaise lena hai. Agar aap AI ko clear, specific instructions doge, to ye bahut accha kaam karega. Agar aap vague ya adhoora sawal poochoge, to jawab bhi utna hi vague aayega.
+
+[TITLE]
+Chapter 2: Sabse Badi Galti Jo Beginners Karte Hain
+
+[TEXT]
+Maine sainkdon logon ko AI use karte dekha hai, aur ek galti sabse zyada baar hoti hai — log AI se aise baat karte hain jaise wo Google search kar rahe hon. Chhote, adhoore sawal poochte hain, aur fir jab jawab boring ya generic aata hai, to keh dete hain ki "AI itna smart nahi hai."
+
+[TEXT]
+Lekin asli problem AI nahi hota, asli problem hota hai prompt — matlab aapka sawal ya instruction. Ek chhota sa change karke aap bilkul alag, bahut zyada useful jawab pa sakte ho.
+
+[SPLIT: Weak Prompt | Strong Prompt]
+Left: "Mujhe fitness ke baare mein batao"
+Right: "Main 25 saal ka beginner hoon, ghar par bina equipment ke workout karna chahta hoon, mujhe 30 minute ka ek weekly plan chahiye jo weight loss ke liye ho"
+
+[TEXT]
+Dekha aapne farak? Pehla sawal itna general hai ki AI ko andaza hi nahi lagta aapko kya chahiye. Doosra sawal specific hai — umar, jagah, time, aur goal, sab kuch clear hai. Isi wajah se doosra jawab hamesha behtar aayega.
+
+[CARD]
+Golden Rule: Jitna specific aap apna sawal banaoge, utna hi useful jawab aapko milega. Vague sawal, vague jawab.
+
+[TITLE]
+Chapter 3: CCG Framework — Har Achhe Prompt Ka Secret
+
+[TEXT]
+Ab main aapko ek simple framework deta hoon jo aap kisi bhi AI tool ke saath use kar sakte ho, chahe wo ChatGPT ho, Gemini ho, ya koi aur. Iska naam hai CCG — Context, Constraint, aur Goal.
+
+[CARD]
+Context matlab: AI ko batao aap kaun ho, situation kya hai. Jaise "main ek college student hoon" ya "main ek chhoti dukaan chalata hoon".
+
+[CARD]
+Constraint matlab: Limits batao. Jaise "500 words se zyada nahi", "simple Hindi mein", "budget 5000 rupaye tak".
+
+[CARD]
+Goal matlab: Bilkul clear batao aapko chahiye kya. Jaise "ek email draft karo", "ek weekly plan banao", "mujhe samjhao jaise main 10 saal ka bachcha hoon".
+
+[TEXT]
+Jab aap ye teeno cheezein ek prompt mein daal dete ho, to AI ka jawab bilkul precise aur useful ban jata hai. Chaliye ek aur example dekhte hain jahan ye teeno cheezein use ho rahi hain.
+
+[WINDOW: ChatGPT]
+User: "Main ek chhoti online clothing shop chalata hoon, mujhe Instagram ke liye 5 post ideas chahiye jo festive season ke liye ho, har idea sirf ek line mein"
+AI: "Bilkul, yahan hain 5 festive Instagram post ideas: 1. Diwali special combo offer announcement, 2. Behind the scenes packing video, 3. Customer review highlight, 4. Festive outfit styling tips, 5. Limited stock countdown post"
+
+[TEXT]
+Dekha, kitna specific aur ready-to-use jawab aaya. Ye isliye kyunki prompt mein context, constraint, aur goal, teeno the.
+
+[TITLE]
+Chapter 4: Roz-Mara Ke Kaam Mein AI Kaise Use Karein
+
+[TEXT]
+Ab baat karte hain practical use cases ki, matlab AI ko aap apni daily life mein kaise fit kar sakte ho. Chaliye pehle office aur kaam ke context se shuru karte hain.
+
+[CARD]
+Email aur messages: Koi bhi mushkil ya sensitive email likhne se pehle AI se draft banwao, phir usme apna personal touch add karo.
+
+[TEXT]
+Bahut log sochte hain ki AI ka likha hua email seedha bhej dena chahiye. Lekin behtar tarika hai — AI se ek base draft banwao, fir usme apni language, apna tone daal do. Isse email professional bhi lagega aur personal bhi.
+
+[WINDOW: ChatGPT]
+User: "Meri client ne project deadline poochi hai, lekin hume 3 din aur chahiye, ek polite email draft karo jisme reason bhi ho"
+AI: "Subject: Project Timeline Update. Dear [Client Name], main aapko update dena chahta tha ki quality maintain karne ke liye humein 3 additional din chahiye honge. Hum ye time final testing aur refinement ke liye use karenge taaki aapko sabse behtar output mile. Aapki understanding ke liye dhanyawad."
+
+[CARD]
+Padhai aur seekhna: Kisi bhi mushkil topic ko AI se "simple bhasha mein samjhao, jaise main beginner hoon" bol kar poocho. Ye kisi bhi private tutor jitna helpful ho sakta hai.
+
+[TEXT]
+Agar aap koi naya subject seekh rahe ho — chahe wo coding ho, finance ho, ya koi bhi science ka topic — AI se bolo "isse step by step samjhao, pehle basic level se shuru karo." Ye aapko exam-ready explanation dega jo textbook se zyada easy ho sakta hai.
+
+[SPLIT: Boring Explanation | Engaging Explanation]
+Left: "Photosynthesis is the process by which plants convert light energy into chemical energy"
+Right: "Socho plants ke paas ek chhota kitchen hai jahan sunlight, paani aur hawa milkar unka khana banate hain — isi process ko photosynthesis kehte hain"
+
+[TEXT]
+Same information, lekin doosra tarika samajhna zyada aasan hai kyunki usme ek relatable example diya gaya hai. AI se hamesha bolo "isse ek real-life example ke saath samjhao" — ye trick kaafi kaam aati hai.
+
+[CARD]
+Creative kaam: Content ideas, captions, chhoti stories, ya presentation outlines banane mein AI ek acha starting point deta hai. Fir aap apni creativity add karke usse polish kar sakte ho.
+
+[TITLE]
+Chapter 5: Advance Techniques Jo Kaam Ko Aur Behtar Banati Hain
+
+[TEXT]
+Ab tak humne basics dekhe. Ab thodi advance techniques dekhte hain jo aapke results ko ek level upar le jayengi.
+
+[CARD]
+Technique 1 — Role Assign Karo: AI ko bolo "tum ek expert nutritionist ho" ya "tum ek senior teacher ho". Isse jawab ka tone aur depth dono badal jate hain.
+
+[WINDOW: Gemini]
+User: "Tum ek 20 saal ke experience wale career coach ho. Main confused hoon ki job continue karun ya apna business shuru karun."
+AI: "Samajh sakta hoon ye decision mushkil hai. Chaliye kuch sawalon se shuru karte hain — aapki current savings kitni hain, aur kya aapke paas 6 mahine ka backup fund hai agar business shuru mein slow ho?"
+
+[TEXT]
+Dekha, jab AI ko ek role diya gaya, to jawab bhi expert jaisa aaya, generic advice nahi.
+
+[CARD]
+Technique 2 — Step by Step Poocho: Agar koi kaam complex hai, to seedha final answer mat mango. Bolo "ise step by step todo aur har step explain karo." Isse jawab zyada organized aur samajhne mein aasan hota hai.
+
+[CARD]
+Technique 3 — Example Do: Agar aapko koi specific style ya format chahiye, to AI ko ek example de do. Jaise "is tone mein likho" ke saath ek sample paragraph attach kar do. Ye technique bahut accurate results deti hai.
+
+[TEXT]
+Ye teeno techniques — role, steps, aur examples — jab aap combine karte ho apne CCG framework ke saath, to aapke prompts professional level ke ban jate hain.
+
+[TITLE]
+Chapter 6: AI Ke Traps Jinse Bachna Zaroori Hai
+
+[TEXT]
+Ab ek zaroori topic — AI ki limitations aur usse hone wali galtiyan. Ye jaanna utna hi zaroori hai jitna acha prompt likhna.
+
+[CARD]
+Hallucination: AI kabhi kabhi bilkul galat information ko bhi bahut confident tareeke se sach jaisa present kar deta hai. Isse "hallucination" kehte hain.
+
+[TEXT]
+Jaise agar aap AI se poochein "iss book ka author kaun hai," to agar AI ko exact pata nahi hai, to bhi wo ek plausible naam bana ke de sakta hai jo bilkul galat ho sakta hai. Isliye kisi bhi facts, dates, ya statistics ko doosre reliable source se verify zaroor karo, khaaskar jab wo important decisions ke liye ho.
+
+[CARD]
+Rule: Creative kaam ke liye AI par pura bharosa karo, lekin facts, health, legal, ya financial advice ke liye hamesha double-check karo.
+
+[TEXT]
+Ek aur cheez — AI ka training data ek fixed time tak ka hota hai, matlab bahut recent events ya news ke baare mein usse pata nahi hota jab tak wo internet search na kare. Isliye latest information ke liye hamesha check karo ki AI search kar raha hai ya sirf apne memory se bata raha hai.
+
+[CARD]
+Over-dependence se bachein: AI ek tool hai, crutch nahi. Apni critical thinking aur decision-making skills khud strong rakhna zaroori hai — AI usme sirf madad karta hai.
+
+[TITLE]
+Chapter 7: Kaunsa AI Tool Kab Use Karein
+
+[TEXT]
+Market mein aajkal bahut saare AI tools hain, aur beginners ke liye confusion hoti hai ki kaunsa kab use karein. Chaliye ek simple guide dekhte hain.
+
+[SPLIT: General Chat AI | Search-Based AI]
+Left: "Creative writing, brainstorming, explanations, coding help ke liye best"
+Right: "Latest news, current events, ya real-time information chahiye ho to search-integrated AI use karo"
+
+[TEXT]
+Agar aapka kaam creative hai — jaise content likhna, ideas sochna, ya kisi concept ko samajhna — to general chat AI perfect hai. Lekin agar aapko aaj ki date ki news ya kisi live event ki information chahiye, to aise tool use karo jo internet search kar sake.
+
+[CARD]
+Image aur design kaam ke liye alag tools hote hain jo text se image banate hain. Video editing ke liye bhi specialized AI tools available hain. Har kaam ke liye sahi tool choose karna important hai.
+
+[TEXT]
+Meri suggestion yeh hai — shuru mein ek ya do tools acche se seekho, unki strengths samjho, fir dheere dheere doosre tools explore karo. Ek saath sab kuch seekhne ki koshish mat karo.
+
+[TITLE]
+Chapter 8: Ek Daily AI Habit Kaise Banayein
+
+[TEXT]
+Sabse important cheez jo main aaj aapko batana chahta hoon — AI seekhna ek one-time cheez nahi hai, ye ek habit hai jo dheere dheere build karni padti hai.
+
+[CARD]
+Har din sirf 10 minute AI ke saath practice karo — koi bhi chhota kaam, email, sawal, ya idea — jo bhi aapke mind mein aaye.
+
+[TEXT]
+Jaise gym jaane se body strong hoti hai, waise hi roz thodi der AI use karne se aapki "AI muscle" strong hoti hai. Aapko naye tricks aur naye use cases khud discover hone lagenge.
+
+[CARD]
+Apni khud ki prompt library banao — jo bhi acha prompt kaam kar jaye, use ek notes file mein save kar lo, taaki agli baar dobara wahi kaam ke liye reuse kar sako.
+
+[WINDOW: ChatGPT]
+User: "Mujhe aaj ka ek chhota challenge do jisse main apni prompting skill practice kar sakoon"
+AI: "Zaroor! Aaj try karo: ek prompt likho jisme aap AI ko apni pasandeeda movie ka summary do aur usse bolo ki wahi story ek alag genre mein rewrite kare, jaise horror ya comedy."
+
+[TEXT]
+Aise chhote challenges khud ko dete raho. Isse practice bhi hogi aur seekhna bhi mazedaar banega.
+
+[TITLE]
+Chapter 9: Real-World Case Studies
+
+[TEXT]
+Chaliye kuch real examples dekhte hain jahan sahi prompting ne bada farak dala. Ye examples aapko dikhayenge ki chhoti si change kitna bada impact laa sakti hai.
+
+[SPLIT: Student Ka Weak Prompt | Student Ka Strong Prompt]
+Left: "Essay likh do history par"
+Right: "10th class ke liye 300 words ka essay likho, Indian freedom struggle ke 3 major events cover karo, simple language mein"
+
+[TEXT]
+Pehla prompt AI ko koi direction nahi deta, isliye jawab generic hoga. Doosra prompt exact grade level, word count, topic, aur tone specify karta hai — isliye jawab directly usable hoga.
+
+[SPLIT: Business Owner Ka Weak Prompt | Business Owner Ka Strong Prompt]
+Left: "Marketing plan chahiye"
+Right: "Meri chhoti bakery hai jo ek Tier-2 city mein hai, budget 10000 rupaye per month hai, mujhe local customers ke liye ek simple 30-din ka marketing plan chahiye"
+
+[TEXT]
+Ye dono examples dikhate hain ki context aur constraint dena kitna zaroori hai. Chahe aap student ho ya business owner, principle same rehta hai.
+
+[CARD]
+Practice karo: Apni real zindagi ki ek problem lo, aur usko CCG framework use karke ek prompt mein convert karo. Yahi sabse achha tarika hai seekhne ka.
+
+[TITLE]
+Chapter 10: AI Ke Saath Ethically Kaam Karna
+
+[TEXT]
+Ek aakhri important topic — AI ko responsibly use karna. Jaise koi bhi powerful tool, AI ka bhi sahi aur galat use ho sakta hai.
+
+[CARD]
+Kabhi bhi AI ka kaam apna bata kar submit mat karo agar wo academic ya professional integrity ke against ho. AI ko ek assistant ki tarah use karo, replacement ki tarah nahi.
+
+[TEXT]
+Agar aap AI se content generate karwa rahe ho jo public ke liye hai — jaise social media posts, articles, ya videos — to usse fact-check karna aur apna personal touch dena zaroori hai. Isse aapka content authentic aur trustworthy dono rehta hai.
+
+[CARD]
+Privacy dhyan mein rakho: Kisi bhi AI tool mein apni ya kisi aur ki sensitive personal information, jaise bank details ya passwords, kabhi mat daalo.
+
+[TITLE]
+Milte Hain Agli Video Mein. Tab Tak, Practice Karte Raho!
