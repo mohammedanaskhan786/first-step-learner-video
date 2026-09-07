@@ -1,0 +1,16 @@
+import { Composition } from "remotion";
+import { FirstStepLearner } from "./FirstStepLearner";
+
+export const Root = () => {
+  return (
+    <Composition
+      id="FirstStepLearner"
+      component={FirstStepLearner}
+      durationInFrames={16200} // 9 minutes at 30fps
+      fps={30}
+      width={1920}
+      height={1080}
+    />
+  );
+};
+
