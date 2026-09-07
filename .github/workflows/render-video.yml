@@ -24,11 +24,9 @@ jobs:
 
       - name: Extract project ZIP
         run: |
-         unzip -o First_Step_Learner_60_Minute_Remotion_Project.zip
-         cp -r First_Step_Learner_60_Minute_Project/* .
-         cp -r First_Step_Learner_60_Minute_Project/.[!.]* . 2>/dev/null
-         || true
-
+          unzip -o First_Step_Learner_60_Minute_Remotion_Project.zip -d extracted_folder
+          cp -r extracted_folder/First_Step_Learner_60_Minute_Project/* ./
+    
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
