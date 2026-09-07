@@ -1,0 +1,34 @@
+name: Render First Step Learner Video
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Extract project ZIP
+        run: |
+          unzip -o First_Step_Learner_60_Minute_Remotion_Project.zip -d extracted_folder
+          cp -r extracted_folder/First_Step_Learner_60_Minute_Project/* ./
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npx remotion browser ensure
+
+      - name: Render Video
+        run: |
+          npm run build
+
