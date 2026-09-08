@@ -4,8 +4,8 @@
   "description": "First Step Learner Cinematic Educational Video",
   "private": true,
   "scripts": {
-  "start": "Remotion studio",
-  "build": "Remotion render Remotion/index.ts FirstStepLearner out/video.mp4"
+  "start": "remotion studio",
+  "build": "remotion render remotion/index.ts FirstStepLearner out/video.mp4"
   },
   
   "dependencies": {
