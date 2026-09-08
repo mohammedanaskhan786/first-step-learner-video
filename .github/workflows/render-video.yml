@@ -413,8 +413,8 @@ jobs:
           };
           EOF
 
-            - name: Install Chrome dependencies
-               run: |
+           - name: Install Chrome dependencies
+              run: |
                sudo apt-get update
                sudo apt-get install -y \
                  chromium-browser \
@@ -431,6 +431,11 @@ jobs:
                  libgbm1 \
                  libasound2
 
+      - name: Install Chromium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium
+          
       - name: Render 60 minute animated MP4
         run: |
           mkdir -p out
