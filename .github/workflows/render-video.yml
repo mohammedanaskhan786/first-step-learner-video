@@ -419,7 +419,7 @@ jobs:
       - name: Render 60 minute animated MP4
         run: |
           mkdir -p out
-          npm run render
+          npx remotion render src/index.ts FirstStepLearner60 out/first-step-learner.mp4 --gl=swangle --concurrency=1
 
       - name: Upload rendered video
         uses: actions/upload-artifact@v4
