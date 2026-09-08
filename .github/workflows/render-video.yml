@@ -24,6 +24,6 @@ jobs:
 
       - name: Render Video
         run: |
-          npn run build 
+          npm run build 
           
           
