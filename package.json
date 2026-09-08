@@ -6,7 +6,7 @@
   "scripts": {
   "start": "remotion studio",
   "build": "remotion render Remotion/index.ts FirstStepLearner out/video.mp4"
-  }
+  },
   
   "dependencies": {
     "react": "^18.2.0",
