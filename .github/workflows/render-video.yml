@@ -421,7 +421,8 @@ jobs:
       - name: Install Chromium
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
           
       - name: Render 60 minute animated MP4
         run: |
