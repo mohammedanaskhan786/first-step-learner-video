@@ -429,10 +429,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Increase shared memory
+        run: sudo mount -o remount,size=2G /dev/shm
+  
       - name: Render 60 minute animated MP4
         run: |
           mkdir -p out
-          npx remotion render src/index.ts FirstStepLearner60 out/first-step-learner.mp4 --gl=swangle --concurrency=1
+          npx remotion render src/index.ts FirstStepLearner60 out/first-step-learner.mp4 --gl=angle --concurrency=1
 
       - name: Upload rendered video
         uses: actions/upload-artifact@v4
