@@ -28,11 +28,6 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Chromium
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium
-
       - name: Install Node dependencies
         run: npm install
 
