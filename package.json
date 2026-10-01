@@ -1,0 +1,20 @@
+{
+  "name": "first-step-learner-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "First Step Learner Remotion motion graphics demo",
+  "scripts": {
+    "build": "remotion render remotion/index.ts FirstStepLearner out/video.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.523",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.523"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
+    "typescript": "5.9.2"
+  }
+}
