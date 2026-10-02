@@ -1,1 +1,14 @@
-a
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600">
+<rect width="1000" height="600" fill="#0b0d11"/>
+<path d="M115 160 L170 125 L235 135 L275 105 L350 125 L405 105 L470 130
+L520 115 L575 145 L650 135 L720 165 L790 150 L850 195 L900 250 L865 295
+L890 345 L850 390 L790 410 L735 445 L665 425 L610 455 L545 430 L490 455
+L425 420 L370 430 L320 390 L265 400 L225 360 L175 345 L150 300 L105 275
+L125 230 Z" fill="#171b22" stroke="#9aa0aa" stroke-width="5"/>
+<circle cx="540" cy="285" r="13" fill="#ffffff"/>
+<circle cx="540" cy="285" r="28" fill="none" stroke="#ffffff" stroke-width="3" opacity=".45"/>
+<path d="M540 285 C650 245 745 265 820 320" fill="none" stroke="#ffffff" stroke-width="5" stroke-dasharray="12 10"/>
+<text x="500" y="250" fill="#ffffff" font-size="26" font-family="Arial">LOCATION A</text>
+<text x="790" y="355" fill="#ffffff" font-size="26" font-family="Arial">LOCATION B</text>
+<text x="50" y="550" fill="#9aa0aa" font-size="22" font-family="Arial">USA — SCHEMATIC STORY MAP</text>
+</svg>
