@@ -1,12 +1,10 @@
 import React from "react";
-import {
-  AbsoluteFill,
-  Audio,
-  Sequence,
-  staticFile,
-} from "remotion";
+import { AbsoluteFill, Sequence } from "remotion";
 
 import { StoryData, StoryScene } from "./storyData";
+
+import { AudioLayer } from "./components/AudioLayer";
+import { SubtitleOverlay } from "./components/SubtitleOverlay";
 
 import { ColdOpen } from "./scenes/ColdOpen";
 import { LocationScene } from "./scenes/LocationScene";
@@ -22,7 +20,9 @@ import { WhatRemainsUnknown } from "./scenes/WhatRemainsUnknown";
 import { ResolutionScene } from "./scenes/ResolutionScene";
 import { EndingScene } from "./scenes/EndingScene";
 
-const renderScene = (scene: StoryScene) => {
+const SceneRenderer: React.FC<{
+  scene: StoryScene;
+}> = ({ scene }) => {
   switch (scene.type) {
     case "coldOpen":
       return <ColdOpen scene={scene} />;
@@ -49,13 +49,17 @@ const renderScene = (scene: StoryScene) => {
       return <EvidenceScene scene={scene} />;
 
     case "investigation":
-      return <InvestigationScene scene={scene} />;
+      return (
+        <InvestigationScene scene={scene} />
+      );
 
     case "known":
       return <WhatWeKnow scene={scene} />;
 
     case "unknown":
-      return <WhatRemainsUnknown scene={scene} />;
+      return (
+        <WhatRemainsUnknown scene={scene} />
+      );
 
     case "resolution":
       return <ResolutionScene scene={scene} />;
@@ -68,28 +72,41 @@ const renderScene = (scene: StoryScene) => {
   }
 };
 
-export const MainVideo: React.FC<{ story: StoryData }> = ({ story }) => {
+export const MainVideo: React.FC<{
+  story: StoryData;
+}> = ({ story }) => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#080808",
+        backgroundColor: "#070707",
         color: "#ffffff",
         fontFamily:
           "Arial, Helvetica, sans-serif",
-        overflow: "hidden",
       }}
     >
+      <AudioLayer
+        narration={story.narration}
+        music={story.music}
+        ambience={story.ambience}
+        sfx={story.sfx}
+        fps={story.fps}
+      />
+
       {story.scenes.map((scene) => (
         <Sequence
           key={scene.id}
           from={scene.start * story.fps}
-          durationInFrames={scene.duration * story.fps}
+          durationInFrames={
+            scene.duration * story.fps
+          }
         >
-          {renderScene(scene)}
+          <SceneRenderer scene={scene} />
         </Sequence>
       ))}
 
-      <Audio src={staticFile("audio/narration.mp3")} />
+      <SubtitleOverlay
+        cues={story.subtitles}
+      />
     </AbsoluteFill>
   );
 };
