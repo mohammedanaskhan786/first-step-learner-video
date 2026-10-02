@@ -1,14 +1,17 @@
 import React from "react";
-import {Composition} from "remotion";
-import {MainVideo} from "./MainVideo";
-import {storyData} from "./storyData";
-import {getNarrationDuration} from "./audioDuration";
+import { Composition } from "remotion";
+import { MainVideo } from "./MainVideo";
+import { storyData } from "./storyData";
+import { getNarrationDuration } from "./audioDuration";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <Composition
       id="FirstStepLearner"
       component={MainVideo}
+      defaultProps={{
+        story: storyData,
+      }}
       width={1920}
       height={1080}
       fps={storyData.fps}
@@ -17,7 +20,9 @@ export const RemotionRoot: React.FC = () => {
         const duration = await getNarrationDuration();
 
         return {
-          durationInFrames: Math.ceil(duration * storyData.fps),
+          durationInFrames: Math.ceil(
+            duration * storyData.fps
+          ),
         };
       }}
     />
