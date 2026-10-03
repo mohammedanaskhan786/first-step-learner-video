@@ -1,1 +1,16 @@
-a
+{
+  "version": 2,
+  "title": "AUTO STORY",
+  "subtitle": "Narration-driven documentary",
+  "fps": 30,
+  "narration": "audio/narration.mp3",
+  "music": "music/investigation.mp3",
+  "ambience": "audio/ambience/atmosphere.mp3",
+  "visualBeats": [],
+  "subtitles": [],
+  "assets": [],
+  "sources": [],
+  "locations": [],
+  "dates": [],
+  "years": []
+}
