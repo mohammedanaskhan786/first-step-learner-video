@@ -1,6 +1,6 @@
 import asyncio
 import json
-import os
+import re
 from pathlib import Path
 
 import edge_tts
@@ -17,11 +17,13 @@ RATE = "-5%"
 VOLUME = "+0%"
 
 
-async def generate_voice():
+def split_words(text: str):
+    return re.findall(r"\S+", text)
+
+
+async def generate_audio():
     if not INPUT_FILE.exists():
-        raise FileNotFoundError(
-            f"Missing narration file: {INPUT_FILE}"
-        )
+        raise FileNotFoundError("Missing narration.txt")
 
     text = INPUT_FILE.read_text(encoding="utf-8").strip()
 
@@ -38,56 +40,98 @@ async def generate_voice():
         volume=VOLUME,
     )
 
-    word_timings = []
-    audio_chunks = []
+    audio_data = bytearray()
 
     async for event in communicate.stream():
-        event_type = event.get("type")
+        if event.get("type") == "audio":
+            audio_data.extend(event["data"])
 
-        if event_type == "audio":
-            audio_chunks.append(event["data"])
+    if not audio_data:
+        raise RuntimeError("Edge TTS returned no audio.")
 
-        elif event_type == "WordBoundary":
-            offset = event.get("offset", 0)
-            duration = event.get("duration", 0)
-            word = event.get("text", "").strip()
+    AUDIO_FILE.write_bytes(audio_data)
 
-            if not word:
-                continue
+    print(f"Voiceover generated: {AUDIO_FILE}")
 
-            # edge-tts uses 100-nanosecond units.
-            start = offset / 10_000_000
-            duration_seconds = duration / 10_000_000
-            end = start + duration_seconds
 
-            word_timings.append(
-                {
-                    "word": word,
-                    "start": round(start, 4),
-                    "end": round(end, 4),
-                }
-            )
+def get_audio_duration():
+    """
+    Read MP3 duration without requiring ffmpeg.
+    Uses mutagen, installed by the workflow.
+    """
+    from mutagen.mp3 import MP3
 
-    if not audio_chunks:
-        raise RuntimeError(
-            "Voice generation produced no audio data."
+    audio = MP3(str(AUDIO_FILE))
+    return float(audio.info.length)
+
+
+def create_fallback_timings(text: str, duration: float):
+    """
+    Creates stable proportional word timings.
+
+    This is intentionally used only when Edge TTS does not
+    expose WordBoundary events.
+    """
+
+    words = split_words(text)
+
+    if not words:
+        raise ValueError("No words found in narration.")
+
+    # Give slightly more time to longer words.
+    weights = [
+        max(1.0, len(re.sub(r"\W", "", word)))
+        for word in words
+    ]
+
+    total_weight = sum(weights)
+
+    timings = []
+    current = 0.0
+
+    for index, (word, weight) in enumerate(zip(words, weights)):
+        portion = weight / total_weight
+
+        if index == len(words) - 1:
+            end = duration
+        else:
+            end = current + duration * portion
+
+        timings.append(
+            {
+                "word": word,
+                "start": round(current, 4),
+                "end": round(end, 4),
+            }
         )
 
-    AUDIO_FILE.write_bytes(b"".join(audio_chunks))
+        current = end
 
-    if not word_timings:
-        raise RuntimeError(
-            "Voiceover was generated, but edge-tts returned "
-            "zero WordBoundary timings. Cannot continue safely."
-        )
+    return timings
+
+
+async def generate_voice():
+    text = INPUT_FILE.read_text(encoding="utf-8").strip()
+
+    await generate_audio()
+
+    duration = get_audio_duration()
+
+    if duration <= 0:
+        raise RuntimeError("Generated audio has invalid duration.")
+
+    timings = create_fallback_timings(
+        text=text,
+        duration=duration,
+    )
 
     TIMINGS_FILE.write_text(
         json.dumps(
             {
-                "voice": VOICE,
-                "rate": RATE,
-                "word_count": len(word_timings),
-                "words": word_timings,
+                "method": "audio-duration-proportional",
+                "duration": round(duration, 4),
+                "word_count": len(timings),
+                "words": timings,
             },
             ensure_ascii=False,
             indent=2,
@@ -95,8 +139,8 @@ async def generate_voice():
         encoding="utf-8",
     )
 
-    print(f"Voiceover generated: {AUDIO_FILE}")
-    print(f"Word timings generated: {len(word_timings)}")
+    print(f"Audio duration: {duration:.2f}s")
+    print(f"Word timings generated: {len(timings)}")
 
 
 if __name__ == "__main__":
