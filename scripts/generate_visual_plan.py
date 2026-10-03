@@ -1,4 +1,3 @@
-
 import json
 import re
 from pathlib import Path
@@ -23,7 +22,6 @@ def load_json(path: Path):
 
 def load_word_timings():
     data = load_json(TIMINGS_FILE)
-
     words = data.get("words", [])
 
     if not isinstance(words, list) or not words:
@@ -37,11 +35,6 @@ def normalize_text(text: str) -> str:
 
 
 def sentence_time_range(sentence_text: str, words, search_from: int):
-    """
-    Finds the approximate timing of a sentence inside the generated
-    proportional word timings.
-    """
-
     target_words = re.findall(r"\S+", sentence_text)
 
     if not target_words:
@@ -71,10 +64,9 @@ def sentence_time_range(sentence_text: str, words, search_from: int):
     }, end_index
 
 
-def detect_visual_type(sentence: str, detected_topics: dict):
+def detect_visual_type(sentence: str):
     text = sentence.lower()
 
-    # Route / movement
     route_words = [
         "from ",
         " to ",
@@ -94,7 +86,6 @@ def detect_visual_type(sentence: str, detected_topics: dict):
     if any(word in text for word in route_words):
         return "map"
 
-    # Location
     location_words = [
         "in ",
         "at ",
@@ -115,7 +106,6 @@ def detect_visual_type(sentence: str, detected_topics: dict):
     if any(word in text for word in location_words):
         return "location"
 
-    # Dates / timeline
     if re.search(r"\b(?:18|19|20)\d{2}\b", sentence):
         return "timeline"
 
@@ -133,7 +123,6 @@ def detect_visual_type(sentence: str, detected_topics: dict):
     if any(word in text for word in timeline_words):
         return "timeline"
 
-    # Newspaper
     newspaper_words = [
         "newspaper",
         "headline",
@@ -147,7 +136,6 @@ def detect_visual_type(sentence: str, detected_topics: dict):
     if any(word in text for word in newspaper_words):
         return "newspaper"
 
-    # Documents / reports
     document_words = [
         "report",
         "record",
@@ -161,7 +149,6 @@ def detect_visual_type(sentence: str, detected_topics: dict):
     if any(word in text for word in document_words):
         return "document"
 
-    # Investigation / evidence
     evidence_words = [
         "evidence",
         "clue",
@@ -179,7 +166,6 @@ def detect_visual_type(sentence: str, detected_topics: dict):
     if any(word in text for word in evidence_words):
         return "evidence"
 
-    # Quotes / statements
     quote_words = [
         "said",
         "stated",
@@ -192,7 +178,6 @@ def detect_visual_type(sentence: str, detected_topics: dict):
     if any(word in text for word in quote_words):
         return "quote"
 
-    # Statistics
     statistics_words = [
         "%",
         "percent",
@@ -208,21 +193,46 @@ def detect_visual_type(sentence: str, detected_topics: dict):
     if any(word in text for word in statistics_words):
         return "statistics"
 
-    # Default cinematic narration
     return "cinematic"
 
 
-def visual_description(visual_type: str, sentence: str):
+def visual_description(visual_type: str):
     descriptions = {
-        "map": "Cinematic map visualization with location markers and animated route.",
-        "location": "Cinematic location card with geographic context.",
-        "timeline": "Cinematic timeline highlighting the referenced date or event.",
-        "newspaper": "Newspaper-style reconstruction clearly presented as a visual reconstruction.",
-        "document": "Document/report reconstruction with source-status treatment.",
-        "evidence": "Evidence-board visualization connecting relevant clues and facts.",
-        "quote": "Clean cinematic quotation card highlighting the spoken statement.",
-        "statistics": "Cinematic statistics visualization using counters or charts.",
-        "cinematic": "Cinematic documentary visual using typography, shapes, atmosphere and controlled motion.",
+        "map": (
+            "Cinematic map visualization with location markers "
+            "and animated route."
+        ),
+        "location": (
+            "Cinematic location card with geographic context."
+        ),
+        "timeline": (
+            "Cinematic timeline highlighting the referenced date "
+            "or event."
+        ),
+        "newspaper": (
+            "Newspaper-style reconstruction clearly presented "
+            "as a visual reconstruction."
+        ),
+        "document": (
+            "Document or report reconstruction with source-status "
+            "treatment."
+        ),
+        "evidence": (
+            "Evidence-board visualization connecting relevant "
+            "clues and facts."
+        ),
+        "quote": (
+            "Clean cinematic quotation card highlighting the "
+            "spoken statement."
+        ),
+        "statistics": (
+            "Cinematic statistics visualization using counters "
+            "or charts."
+        ),
+        "cinematic": (
+            "Cinematic documentary visual using typography, "
+            "shapes, atmosphere and controlled motion."
+        ),
     }
 
     return descriptions.get(
@@ -233,7 +243,6 @@ def visual_description(visual_type: str, sentence: str):
 
 def build_visual_plan(story, word_timings):
     sentences = story.get("sentences", [])
-    detected_topics = story.get("detected_topics", {})
 
     if not sentences:
         raise ValueError("story.json contains no sentences.")
@@ -243,7 +252,9 @@ def build_visual_plan(story, word_timings):
 
     for sentence_item in sentences:
         sentence_id = sentence_item.get("id")
-        sentence = normalize_text(sentence_item.get("text", ""))
+        sentence = normalize_text(
+            sentence_item.get("text", "")
+        )
 
         if not sentence:
             continue
@@ -259,10 +270,13 @@ def build_visual_plan(story, word_timings):
 
         word_index = new_word_index
 
-        visual_type = detect_visual_type(
-            sentence,
-            detected_topics,
-        )
+        visual_type = detect_visual_type(sentence)
+
+        is_reconstruction = visual_type in {
+            "newspaper",
+            "document",
+            "evidence",
+        }
 
         beat = {
             "id": f"beat-{sentence_id}",
@@ -276,23 +290,12 @@ def build_visual_plan(story, word_timings):
             ),
             "visual_type": visual_type,
             "description": visual_description(
-                visual_type,
-                sentence,
+                visual_type
             ),
-            "reconstruction": visual_type
-            in {
-                "newspaper",
-                "document",
-                "evidence",
-            },
+            "reconstruction": is_reconstruction,
             "source_status": (
                 "reconstruction"
-                if visual_type
-                in {
-                    "newspaper",
-                    "document",
-                    "evidence",
-                }
+                if is_reconstruction
                 else "narration_context"
             ),
         }
@@ -358,28 +361,16 @@ def main():
         encoding="utf-8",
     )
 
-    print(f"Visual beats generated: {plan['beat_count']}")
-    print(f"Story duration: {plan['duration']:.2f}s")
-    print(f"Visual plan written to: {OUTPUT_FILE}")
+    print(
+        f"Visual beats generated: {plan['beat_count']}"
+    )
+    print(
+        f"Story duration: {plan['duration']:.2f}s"
+    )
+    print(
+        f"Visual plan written to: {OUTPUT_FILE}"
+    )
 
 
 if __name__ == "__main__":
     main()
-
-Ab kya hoga
-
-Is fix ke baad pipeline:
-
-"narration.txt"
-→ "generate_voice.py" ✅
-→ "word_timings.json" ✅
-→ "analyze_script.py" ✅
-→ "generate_visual_plan.py" ✅
-→ "generate_subtitles.py"
-→ "prepare_assets.py"
-→ "validate_pipeline.py"
-→ Remotion render
-
-Aur important: 341.71 seconds narration duration automatically visual plan mein carry hogi. Manual duration set karne ki zarurat nahi hogi.
-
-Ab sirf ye file replace karke Action dobara run karo. Agar next error aata hai, uska पूरा log bhej dena—ab hum pipeline ko systematically end tak fix kar rahe hain, ek-ek missing dependency ko random तरीके से नहीं जोड़ेंगे.
