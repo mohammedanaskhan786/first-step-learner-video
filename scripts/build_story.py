@@ -3,53 +3,57 @@ import sys
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
 
 
 def run(script_name: str):
-    script_path = SCRIPTS / script_name
+    path = SCRIPTS / script_name
 
-    if not script_path.exists():
+    if not path.exists():
         raise FileNotFoundError(
-            f"Required pipeline script is missing: {script_path}"
+            f"Required script missing: {path}"
         )
 
-    print(f"\n========== RUNNING {script_name} ==========")
+    print()
+    print("=" * 60)
+    print(f"RUNNING: {script_name}")
+    print("=" * 60)
 
     subprocess.run(
-        [sys.executable, str(script_path)],
-        cwd=ROOT,
+        [sys.executable, str(path)],
+        cwd=str(ROOT),
         check=True,
     )
 
 
 def main():
-    print("========================================")
-    print(" FIRST STEP LEARNER STORY PIPELINE")
-    print("========================================")
+    print("=" * 60)
+    print("FIRST STEP LEARNER - STORY BUILD PIPELINE")
+    print("=" * 60)
 
-    # 1. Generate narration audio + real word timings.
+    # Voice + actual audio duration + timing map
     run("generate_voice.py")
 
-    # 2. Analyze narration and create story structure.
+    # Understand the narration
     run("analyze_script.py")
 
-    # 3. Create visual beats using the real word timings.
+    # Generate visual beats
     run("generate_visual_plan.py")
 
-    # 4. Generate subtitle cues from the same timings.
+    # Generate subtitles from the timing map
     run("generate_subtitles.py")
 
-    # 5. Prepare/validate referenced assets.
+    # Prepare/check visual assets
     run("prepare_assets.py")
 
-    # 6. Final pipeline validation.
+    # Final validation
     run("validate_pipeline.py")
 
-    print("\n========================================")
-    print(" STORY PIPELINE COMPLETED SUCCESSFULLY")
-    print("========================================")
+    print()
+    print("=" * 60)
+    print("STORY PIPELINE COMPLETED")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
