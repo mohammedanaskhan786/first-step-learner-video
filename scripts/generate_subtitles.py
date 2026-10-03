@@ -7,15 +7,14 @@ ROOT = Path(__file__).resolve().parent.parent
 TIMINGS_FILE = ROOT / "generated" / "word_timings.json"
 OUTPUT_FILE = ROOT / "generated" / "subtitles.json"
 
+MAX_WORDS = 8
+MAX_DURATION = 3.5
 
-MAX_WORDS_PER_CUE = 8
-MAX_CUE_DURATION = 3.5
 
-
-def load_timings():
+def main():
     if not TIMINGS_FILE.exists():
         raise FileNotFoundError(
-            f"Missing word timing file: {TIMINGS_FILE}"
+            "generated/word_timings.json is missing."
         )
 
     data = json.loads(
@@ -26,75 +25,66 @@ def load_timings():
 
     if not words:
         raise ValueError(
-            "word_timings.json contains no words."
+            "No word timings available."
         )
 
-    return words
-
-
-def build_cues(words):
     cues = []
 
-    current_words = []
-    cue_start = None
-    cue_end = None
+    current = []
+    start = None
+    end = None
 
     for item in words:
-        word = str(item["word"]).strip()
-        start = float(item["start"])
-        end = float(item["end"])
+        word = item["word"].strip()
 
         if not word:
             continue
 
-        if cue_start is None:
-            cue_start = start
+        word_start = float(item["start"])
+        word_end = float(item["end"])
 
-        current_words.append(word)
-        cue_end = end
+        if start is None:
+            start = word_start
 
-        duration = cue_end - cue_start
+        current.append(word)
+        end = word_end
 
-        should_close = (
-            len(current_words) >= MAX_WORDS_PER_CUE
-            or duration >= MAX_CUE_DURATION
-        )
+        duration = end - start
 
-        if should_close:
+        if (
+            len(current) >= MAX_WORDS
+            or duration >= MAX_DURATION
+        ):
             cues.append(
                 {
-                    "start": round(cue_start, 4),
-                    "end": round(cue_end, 4),
-                    "text": " ".join(current_words),
+                    "start": round(start, 4),
+                    "end": round(end, 4),
+                    "text": " ".join(current),
                 }
             )
 
-            current_words = []
-            cue_start = None
-            cue_end = None
+            current = []
+            start = None
+            end = None
 
-    if current_words and cue_start is not None and cue_end is not None:
+    if current:
         cues.append(
             {
-                "start": round(cue_start, 4),
-                "end": round(cue_end, 4),
-                "text": " ".join(current_words),
+                "start": round(start, 4),
+                "end": round(end, 4),
+                "text": " ".join(current),
             }
         )
 
-    return cues
-
-
-def main():
-    words = load_timings()
-    cues = build_cues(words)
-
     if not cues:
-        raise ValueError(
-            "No subtitle cues were generated."
+        raise RuntimeError(
+            "Subtitle generation produced zero cues."
         )
 
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_FILE.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
     OUTPUT_FILE.write_text(
         json.dumps(
