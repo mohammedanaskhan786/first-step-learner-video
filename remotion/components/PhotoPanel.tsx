@@ -1,0 +1,4 @@
+import React from 'react';
+import {AbsoluteFill,Img,staticFile} from 'remotion';
+import {SourceBadge} from './SourceBadge';
+export const PhotoPanel:React.FC<{src?:string;title?:string;text?:string;reconstructed?:boolean}>=({src,title='VISUAL',text='',reconstructed=false})=><AbsoluteFill style={{padding:110}}><div style={{position:'relative',width:'100%',height:'100%',overflow:'hidden',borderRadius:28,background:'#0d0d10',border:'1px solid #2e2a35'}}>{src?<Img src={staticFile(src)} style={{width:'100%',height:'100%',objectFit:'cover'}}/>:<div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center'}}><div style={{textAlign:'center'}}><div style={{fontSize:24,letterSpacing:5,color:'#968da2'}}>{title}</div><div style={{marginTop:25,fontSize:54,fontWeight:800}}>{text}</div></div></div>}<SourceBadge reconstructed={reconstructed}/></div></AbsoluteFill>;

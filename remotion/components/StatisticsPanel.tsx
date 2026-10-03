@@ -1,0 +1,3 @@
+import React from 'react';
+import {AbsoluteFill,spring,useCurrentFrame,useVideoConfig} from 'remotion';
+export const StatisticsPanel:React.FC<{value?:string;label?:string}>=({value='',label=''})=>{const{fps}=useVideoConfig();const p=spring({frame:useCurrentFrame(),fps,config:{damping:16,stiffness:100}});return <AbsoluteFill style={{alignItems:'center',justifyContent:'center',textAlign:'center'}}><div style={{fontSize:175,fontWeight:900,color:'#c7aff3',transform:`scale(${.92+p*.08})`}}>{value}</div><div style={{marginTop:20,maxWidth:1250,fontSize:34,color:'#d3cdd9'}}>{label}</div></AbsoluteFill>};

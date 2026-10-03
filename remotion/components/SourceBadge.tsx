@@ -1,0 +1,2 @@
+import React from 'react';
+export const SourceBadge:React.FC<{label?:string;reconstructed?:boolean}>=({label='SOURCE TRACKED',reconstructed=false})=><div style={{position:'absolute',left:120,bottom:90,padding:'10px 16px',borderRadius:999,background:reconstructed?'rgba(160,105,105,.18)':'rgba(255,255,255,.08)',border:`1px solid ${reconstructed?'rgba(220,160,160,.35)':'rgba(255,255,255,.14)'}`,color:reconstructed?'#e0baba':'#bcb5c8',fontSize:17,letterSpacing:2}}>{reconstructed?'RECONSTRUCTED':label}</div>;
