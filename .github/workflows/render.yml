@@ -31,21 +31,20 @@ jobs:
           python scripts/generate_voice.py
 
       - name: Install Node dependencies
-        run: npm install
+        run: |
+          npm install
+
+      - name: Build story pipeline
+        run: |
+          python scripts/build_story.py
 
       - name: Render Remotion video
-        run: npm run build
+        run: |
+          npm run build
 
       - name: Upload final video
         uses: actions/upload-artifact@v4
         with:
           name: first-step-learner-video
           path: out/video.mp4
-          retention-days: 7
-
-      - name: Upload generated narration
-        uses: actions/upload-artifact@v4
-        with:
-          name: narration-mp3
-          path: public/audio/narration.mp3
           retention-days: 7
