@@ -3,33 +3,17 @@ import { AbsoluteFill } from "remotion";
 import { AudioLayer } from "./components/AudioLayer";
 import { SubtitleOverlay } from "./components/SubtitleOverlay";
 import { NarrationScene } from "./scenes/NarrationScene";
+import type {
+  VisualBeat,
+  SubtitleCue,
+} from "./engineTypes";
 
-export interface VideoBeat {
-  id: string;
-  start: number;
-  end: number;
-  type: string;
-  text: string;
-  data?: {
-    location?: string;
-    date?: string;
-    event?: string;
-    quote?: string;
-    sourceStatus?: string;
-    reconstruction?: boolean;
-  };
-}
-
-export interface VideoProps {
+export type VideoProps = {
   audioUrl: string;
-  visualBeats: VideoBeat[];
-  subtitles: Array<{
-    start: number;
-    end: number;
-    text: string;
-  }>;
+  visualBeats: VisualBeat[];
+  subtitles: SubtitleCue[];
   fps: number;
-}
+};
 
 export const MainVideo: React.FC<VideoProps> = ({
   visualBeats,
@@ -56,7 +40,9 @@ export const MainVideo: React.FC<VideoProps> = ({
         fps={fps}
       />
 
-      <SubtitleOverlay cues={subtitles} />
+      <SubtitleOverlay
+        cues={subtitles}
+      />
     </AbsoluteFill>
   );
 };
