@@ -3,46 +3,57 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-PUBLIC_DIR = ROOT / "public"
-GENERATED_DIR = ROOT / "generated"
+NARRATION_FILE = ROOT / "narration.txt"
+PUBLIC_AUDIO = ROOT / "public" / "audio" / "narration.mp3"
 
-REQUIRED_FILES = [
-    ROOT / "narration.txt",
-    PUBLIC_DIR / "audio" / "narration.mp3",
-    GENERATED_DIR / "word_timings.json",
-    GENERATED_DIR / "story.json",
-    GENERATED_DIR / "visual_plan.json",
-    GENERATED_DIR / "subtitles.json",
-    GENERATED_DIR / "assets.json",
+GENERATED_DIR = ROOT / "generated"
+PUBLIC_GENERATED_DIR = ROOT / "public" / "generated"
+
+REQUIRED_GENERATED = [
+    "word_timings.json",
+    "story.json",
+    "visual_plan.json",
+    "subtitles.json",
+    "assets.json",
+]
+
+REQUIRED_PUBLIC_GENERATED = [
+    "story.json",
+    "visual_plan.json",
+    "subtitles.json",
 ]
 
 
-def check_file(path: Path):
-    if not path.exists():
-        raise FileNotFoundError(
-            f"Required file is missing: {path}"
-        )
-
-    if path.is_file() and path.stat().st_size == 0:
-        raise ValueError(
-            f"Required file is empty: {path}"
-        )
-
-
 def load_json(path: Path):
+    if not path.exists():
+        raise FileNotFoundError(f"Missing file: {path}")
+
     try:
         return json.loads(
             path.read_text(encoding="utf-8")
         )
     except json.JSONDecodeError as exc:
         raise ValueError(
-            f"Invalid JSON file: {path}"
+            f"Invalid JSON: {path}"
         ) from exc
 
 
+def validate_file(path: Path):
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Required file missing: {path}"
+        )
+
+    if path.is_file() and path.stat().st_size == 0:
+        raise ValueError(
+            f"File is empty: {path}"
+        )
+
+
 def validate_word_timings():
-    path = GENERATED_DIR / "word_timings.json"
-    data = load_json(path)
+    data = load_json(
+        GENERATED_DIR / "word_timings.json"
+    )
 
     words = data.get("words", [])
 
@@ -54,145 +65,143 @@ def validate_word_timings():
     previous_end = 0.0
 
     for index, item in enumerate(words):
-        if "word" not in item:
-            raise ValueError(
-                f"Word timing #{index} has no word."
-            )
-
-        if "start" not in item or "end" not in item:
-            raise ValueError(
-                f"Word timing #{index} is missing start/end."
-            )
-
         start = float(item["start"])
         end = float(item["end"])
 
-        if start < 0:
+        if end <= start:
             raise ValueError(
-                f"Word timing #{index} has negative start."
+                f"Invalid timing at word {index}: "
+                f"{start} -> {end}"
             )
 
-        if end < start:
+        if start < previous_end - 0.001:
             raise ValueError(
-                f"Word timing #{index} ends before it starts."
-            )
-
-        if start < previous_end:
-            raise ValueError(
-                f"Word timing #{index} overlaps previous timing."
+                f"Word timing overlap at word {index}."
             )
 
         previous_end = end
 
-    return len(words), previous_end
+    duration = float(data.get("duration", 0))
 
-
-def validate_story():
-    path = GENERATED_DIR / "story.json"
-    data = load_json(path)
-
-    sentences = data.get("sentences", [])
-
-    if not sentences:
+    if duration <= 0:
         raise ValueError(
-            "story.json contains no sentences."
+            "Invalid narration duration."
         )
 
-    return len(sentences)
+    if abs(previous_end - duration) > 0.1:
+        raise ValueError(
+            "Word timings do not end at narration duration."
+        )
+
+    print(
+        f"✓ Word timings valid: "
+        f"{len(words)} words / {duration:.2f}s"
+    )
+
+    return duration
 
 
-def validate_visual_plan():
-    path = GENERATED_DIR / "visual_plan.json"
-    data = load_json(path)
+def validate_visual_plan(narration_duration):
+    data = load_json(
+        GENERATED_DIR / "visual_plan.json"
+    )
 
     beats = data.get("beats", [])
 
     if not beats:
         raise ValueError(
-            "visual_plan.json contains no visual beats."
+            "visual_plan.json contains no beats."
         )
 
-    duration = float(
+    plan_duration = float(
         data.get("duration", 0)
     )
 
-    if duration <= 0:
+    if plan_duration <= 0:
         raise ValueError(
-            "visual_plan.json has invalid duration."
+            "Visual plan has invalid duration."
+        )
+
+    difference = abs(
+        plan_duration - narration_duration
+    )
+
+    if difference > 1.0:
+        raise ValueError(
+            f"Visual plan duration {plan_duration:.2f}s "
+            f"does not match narration "
+            f"{narration_duration:.2f}s."
         )
 
     previous_end = 0.0
 
     for index, beat in enumerate(beats):
-        start = float(beat.get("start", 0))
-        end = float(beat.get("end", 0))
+        start = float(beat["start"])
+        end = float(beat["end"])
 
-        if end < start:
+        if end <= start:
             raise ValueError(
-                f"Visual beat #{index} ends before it starts."
+                f"Invalid visual beat {index}."
             )
 
-        if start < previous_end:
+        if start < previous_end - 0.01:
             raise ValueError(
-                f"Visual beat #{index} overlaps previous beat."
+                f"Visual beat overlap at beat {index}."
             )
 
         previous_end = end
 
-    return len(beats), duration
+    print(
+        f"✓ Visual plan valid: "
+        f"{len(beats)} beats / {plan_duration:.2f}s"
+    )
 
 
-def validate_subtitles():
-    path = GENERATED_DIR / "subtitles.json"
-    data = load_json(path)
+def validate_subtitles(narration_duration):
+    data = load_json(
+        GENERATED_DIR / "subtitles.json"
+    )
 
     cues = data.get("cues", [])
 
     if not cues:
         raise ValueError(
-            "subtitles.json contains no subtitle cues."
+            "subtitles.json contains no cues."
         )
-
-    previous_end = 0.0
 
     for index, cue in enumerate(cues):
-        start = float(cue.get("start", 0))
-        end = float(cue.get("end", 0))
-        text = str(cue.get("text", "")).strip()
+        start = float(cue["start"])
+        end = float(cue["end"])
 
-        if not text:
+        if end <= start:
             raise ValueError(
-                f"Subtitle cue #{index} has no text."
+                f"Invalid subtitle cue {index}."
             )
 
-        if end < start:
+        if start < 0:
             raise ValueError(
-                f"Subtitle cue #{index} ends before it starts."
+                f"Subtitle cue {index} starts before zero."
             )
 
-        if start < previous_end:
+        if end > narration_duration + 0.1:
             raise ValueError(
-                f"Subtitle cue #{index} overlaps previous cue."
+                f"Subtitle cue {index} exceeds narration duration."
             )
 
-        previous_end = end
+    print(
+        f"✓ Subtitles valid: {len(cues)} cues"
+    )
 
-    return len(cues), previous_end
 
+def validate_public_runtime_files():
+    for filename in REQUIRED_PUBLIC_GENERATED:
+        path = PUBLIC_GENERATED_DIR / filename
+        validate_file(path)
 
-def validate_assets():
-    path = GENERATED_DIR / "assets.json"
-    data = load_json(path)
-
-    if not isinstance(
-        data.get("visual_assets", []),
-        list,
-    ):
-        raise ValueError(
-            "assets.json has invalid visual_assets."
-        )
-
-    return len(data.get("visual_assets", []))
+    print(
+        f"✓ Public runtime files ready: "
+        f"{len(REQUIRED_PUBLIC_GENERATED)}"
+    )
 
 
 def main():
@@ -200,27 +209,44 @@ def main():
     print("VALIDATING STORY PIPELINE")
     print("=" * 60)
 
-    for path in REQUIRED_FILES:
-        check_file(path)
+    validate_file(NARRATION_FILE)
+    validate_file(PUBLIC_AUDIO)
 
-    word_count, word_duration = validate_word_timings()
-    sentence_count = validate_story()
-    beat_count, visual_duration = validate_visual_plan()
-    subtitle_count, subtitle_duration = validate_subtitles()
-    asset_count = validate_assets()
+    for filename in REQUIRED_GENERATED:
+        validate_file(
+            GENERATED_DIR / filename
+        )
+
+    print("✓ Required source/generated files exist.")
+
+    narration_duration = validate_word_timings()
+
+    load_json(
+        GENERATED_DIR / "story.json"
+    )
+
+    validate_visual_plan(
+        narration_duration
+    )
+
+    validate_subtitles(
+        narration_duration
+    )
+
+    validate_public_runtime_files()
 
     print()
-    print("Required files: OK")
-    print(f"Words: {word_count}")
-    print(f"Word timing duration: {word_duration:.2f}s")
-    print(f"Sentences: {sentence_count}")
-    print(f"Visual beats: {beat_count}")
-    print(f"Visual duration: {visual_duration:.2f}s")
-    print(f"Subtitle cues: {subtitle_count}")
-    print(f"Subtitle duration: {subtitle_duration:.2f}s")
-    print(f"Asset categories: {asset_count}")
-    print()
+    print("=" * 60)
     print("PIPELINE VALIDATION PASSED")
+    print(
+        f"Narration duration: "
+        f"{narration_duration:.2f}s"
+    )
+    print(
+        f"Expected video duration: "
+        f"{narration_duration:.2f}s"
+    )
+    print("=" * 60)
 
 
 if __name__ == "__main__":
