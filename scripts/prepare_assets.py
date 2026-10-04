@@ -1,79 +1,72 @@
 import json
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-GENERATED_DIR = ROOT / "generated"
+
 PUBLIC_DIR = ROOT / "public"
+GENERATED_DIR = ROOT / "generated"
 
-PLAN_FILE = GENERATED_DIR / "visual_plan.json"
-ASSETS_FILE = GENERATED_DIR / "assets.json"
-
-
-def load_json(path: Path):
-    if not path.exists():
-        raise FileNotFoundError(f"Missing required file: {path}")
-
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise ValueError(f"Invalid JSON file: {path}") from exc
+PUBLIC_AUDIO_DIR = PUBLIC_DIR / "audio"
+PUBLIC_IMAGES_DIR = PUBLIC_DIR / "images"
+PUBLIC_DOCUMENTS_DIR = PUBLIC_DIR / "documents"
+PUBLIC_MAPS_DIR = PUBLIC_DIR / "maps"
+PUBLIC_GENERATED_DIR = PUBLIC_DIR / "generated"
 
 
-def ensure_directories():
-    directories = [
-        PUBLIC_DIR / "audio",
-        PUBLIC_DIR / "images",
-        PUBLIC_DIR / "documents",
-        PUBLIC_DIR / "maps",
-    ]
+def ensure_directory(path: Path):
+    path.mkdir(parents=True, exist_ok=True)
 
-    for directory in directories:
-        directory.mkdir(
-            parents=True,
-            exist_ok=True,
+
+def copy_generated_file(filename: str):
+    source = GENERATED_DIR / filename
+    destination = PUBLIC_GENERATED_DIR / filename
+
+    if not source.exists():
+        raise FileNotFoundError(
+            f"Required generated file missing: {source}"
         )
 
+    shutil.copy2(source, destination)
 
-def build_assets(plan):
-    assets = {
-        "version": 1,
-        "generated": True,
-        "narration": {
-            "path": "audio/narration.mp3",
-            "required": True,
+    print(f"Copied: generated/{filename} -> public/generated/{filename}")
+
+
+def build_assets_manifest():
+    return {
+        "version": 2,
+
+        "audio": {
+            "narration": "audio/narration.mp3",
+            "music": "music/investigation.mp3",
+            "ambience": "audio/ambience/atmosphere.mp3",
         },
-        "visual_assets": [],
-        "available_asset_directories": {
-            "images": "images/",
-            "documents": "documents/",
-            "maps": "maps/",
+
+        "visuals": {
+            "images": "images",
+            "documents": "documents",
+            "maps": "maps",
         },
+
+        "generated": {
+            "story": "generated/story.json",
+            "visual_plan": "generated/visual_plan.json",
+            "subtitles": "generated/subtitles.json",
+        },
+
+        "audio_mix": {
+            "narration": 1.0,
+            "music": 0.075,
+            "ambience": 0.035,
+        },
+
         "rules": {
-            "missing_assets_use_generated_visuals": True,
-            "no_manual_sfx_required": True,
-            "no_manual_ambience_required": True,
-            "no_manual_music_required": True,
-            "generated_visuals_are_reconstructions": True,
+            "manual_sfx_required": False,
+            "manual_visual_assets_required": False,
+            "music_loop": True,
+            "ambience_loop": True,
         },
     }
-
-    visual_types = sorted(
-        {
-            beat.get("visual_type", "cinematic")
-            for beat in plan.get("beats", [])
-        }
-    )
-
-    for visual_type in visual_types:
-        assets["visual_assets"].append(
-            {
-                "type": visual_type,
-                "source": "generated",
-                "required": False,
-            }
-        )
-
-    return assets
 
 
 def main():
@@ -81,34 +74,46 @@ def main():
     print("PREPARING ASSETS")
     print("=" * 60)
 
-    plan = load_json(PLAN_FILE)
+    # Required public directories
+    for directory in [
+        PUBLIC_AUDIO_DIR,
+        PUBLIC_IMAGES_DIR,
+        PUBLIC_DOCUMENTS_DIR,
+        PUBLIC_MAPS_DIR,
+        PUBLIC_GENERATED_DIR,
+    ]:
+        ensure_directory(directory)
 
-    ensure_directories()
+    # Generated runtime files required by Remotion Root.tsx
+    required_generated_files = [
+        "story.json",
+        "visual_plan.json",
+        "subtitles.json",
+    ]
 
-    assets = build_assets(plan)
+    for filename in required_generated_files:
+        copy_generated_file(filename)
 
-    GENERATED_DIR.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
+    # Assets manifest
+    manifest = build_assets_manifest()
 
-    ASSETS_FILE.write_text(
+    manifest_file = GENERATED_DIR / "assets.json"
+
+    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+
+    manifest_file.write_text(
         json.dumps(
-            assets,
+            manifest,
             ensure_ascii=False,
             indent=2,
         ),
         encoding="utf-8",
     )
 
-    print(
-        f"Asset categories prepared: "
-        f"{len(assets['visual_assets'])}"
-    )
-
-    print(
-        f"Asset manifest written to: {ASSETS_FILE}"
-    )
+    print()
+    print(f"Asset manifest written to: {manifest_file}")
+    print(f"Generated runtime files: {len(required_generated_files)}")
+    print("Assets preparation completed.")
 
 
 if __name__ == "__main__":
