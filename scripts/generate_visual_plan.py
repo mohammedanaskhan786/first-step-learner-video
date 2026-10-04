@@ -15,9 +15,13 @@ def load_json(path: Path):
         raise FileNotFoundError(f"Missing required file: {path}")
 
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        return json.loads(
+            path.read_text(encoding="utf-8")
+        )
     except json.JSONDecodeError as exc:
-        raise ValueError(f"Invalid JSON file: {path}") from exc
+        raise ValueError(
+            f"Invalid JSON file: {path}"
+        ) from exc
 
 
 def load_word_timings():
@@ -34,7 +38,11 @@ def normalize_text(text: str) -> str:
     return re.sub(r"\s+", " ", text.strip())
 
 
-def sentence_time_range(sentence_text: str, words, search_from: int):
+def sentence_time_range(
+    sentence_text: str,
+    words,
+    search_from: int,
+):
     target_words = re.findall(r"\S+", sentence_text)
 
     if not target_words:
@@ -64,6 +72,140 @@ def sentence_time_range(sentence_text: str, words, search_from: int):
     }, end_index
 
 
+def extract_year(sentence: str):
+    match = re.search(
+        r"\b(?:18|19|20)\d{2}\b",
+        sentence,
+    )
+
+    if match:
+        return match.group(0)
+
+    return ""
+
+
+def clean_location(value: str):
+    value = value.strip()
+
+    value = re.sub(
+        r"[.,!?;:]+$",
+        "",
+        value,
+    )
+
+    return value
+
+
+def extract_locations(sentence: str):
+    patterns = [
+        r"\bfrom\s+([A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*)",
+        r"\bto\s+([A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*)",
+        r"\bin\s+([A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*)",
+        r"\bat\s+([A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*)",
+        r"\bnear\s+([A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*)",
+    ]
+
+    locations = []
+
+    for pattern in patterns:
+        matches = re.findall(pattern, sentence)
+
+        for match in matches:
+            value = clean_location(match)
+
+            if len(value) > 1:
+                locations.append(value)
+
+    return locations
+
+
+def extract_route(sentence: str):
+    from_match = re.search(
+        r"\bfrom\s+([A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*)",
+        sentence,
+    )
+
+    to_match = re.search(
+        r"\bto\s+([A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*)",
+        sentence,
+    )
+
+    return {
+        "from": (
+            clean_location(from_match.group(1))
+            if from_match
+            else ""
+        ),
+        "to": (
+            clean_location(to_match.group(1))
+            if to_match
+            else ""
+        ),
+    }
+
+
+def extract_statistic(sentence: str):
+    percent_match = re.search(
+        r"\b\d+(?:\.\d+)?\s*%",
+        sentence,
+    )
+
+    if percent_match:
+        return {
+            "value": percent_match.group(0),
+            "label": sentence,
+        }
+
+    number_match = re.search(
+        r"\b\d+(?:\.\d+)?\s*(?:million|billion|thousand)\b",
+        sentence,
+        re.IGNORECASE,
+    )
+
+    if number_match:
+        return {
+            "value": number_match.group(0),
+            "label": sentence,
+        }
+
+    return {
+        "value": "",
+        "label": sentence,
+    }
+
+
+def extract_visual_data(
+    sentence: str,
+    visual_type: str,
+):
+    year = extract_year(sentence)
+    locations = extract_locations(sentence)
+    route = extract_route(sentence)
+
+    data = {
+        "from": route["from"],
+        "to": route["to"],
+        "location": (
+            locations[0]
+            if locations
+            else ""
+        ),
+        "date": year,
+        "event": sentence,
+        "quote": sentence,
+        "value": "",
+        "label": sentence,
+    }
+
+    if visual_type == "statistic":
+        statistic = extract_statistic(sentence)
+
+        data["value"] = statistic["value"]
+        data["label"] = statistic["label"]
+
+    return data
+
+
 def detect_visual_type(sentence: str):
     text = sentence.lower()
 
@@ -86,6 +228,114 @@ def detect_visual_type(sentence: str):
     if any(word in text for word in route_words):
         return "map"
 
+    if re.search(
+        r"\b(?:18|19|20)\d{2}\b",
+        sentence,
+    ):
+        return "timeline"
+
+    timeline_words = [
+        "years later",
+        "months later",
+        "days later",
+        "the next day",
+        "the following year",
+        "later that year",
+        "afterward",
+        "afterwards",
+    ]
+
+    if any(
+        word in text
+        for word in timeline_words
+    ):
+        return "timeline"
+
+    newspaper_words = [
+        "newspaper",
+        "headline",
+        "front page",
+        "article",
+        "reported",
+        "press",
+        "media",
+    ]
+
+    if any(
+        word in text
+        for word in newspaper_words
+    ):
+        return "newspaper"
+
+    document_words = [
+        "report",
+        "record",
+        "document",
+        "file",
+        "statement",
+        "letter",
+        "official record",
+    ]
+
+    if any(
+        word in text
+        for word in document_words
+    ):
+        return "document"
+
+    evidence_words = [
+        "evidence",
+        "clue",
+        "proof",
+        "discovered",
+        "found",
+        "investigation",
+        "investigators",
+        "detective",
+        "police",
+        "authorities",
+        "search",
+    ]
+
+    if any(
+        word in text
+        for word in evidence_words
+    ):
+        return "evidence"
+
+    quote_words = [
+        "said",
+        "stated",
+        "according to",
+        "told",
+        "explained",
+        "claimed",
+    ]
+
+    if any(
+        word in text
+        for word in quote_words
+    ):
+        return "quote"
+
+    statistics_words = [
+        "%",
+        "percent",
+        "million",
+        "billion",
+        "thousand",
+        "statistics",
+        "population",
+        "number",
+        "rate",
+    ]
+
+    if any(
+        word in text
+        for word in statistics_words
+    ):
+        return "statistic"
+
     location_words = [
         "in ",
         "at ",
@@ -103,155 +353,83 @@ def detect_visual_type(sentence: str):
         "building",
     ]
 
-    if any(word in text for word in location_words):
+    if any(
+        word in text
+        for word in location_words
+    ):
         return "location"
 
-    if re.search(r"\b(?:18|19|20)\d{2}\b", sentence):
-        return "timeline"
-
-    timeline_words = [
-        "years later",
-        "months later",
-        "days later",
-        "the next day",
-        "the following year",
-        "later that year",
-        "afterward",
-        "afterwards",
-    ]
-
-    if any(word in text for word in timeline_words):
-        return "timeline"
-
-    newspaper_words = [
-        "newspaper",
-        "headline",
-        "front page",
-        "article",
-        "reported",
-        "press",
-        "media",
-    ]
-
-    if any(word in text for word in newspaper_words):
-        return "newspaper"
-
-    document_words = [
-        "report",
-        "record",
-        "document",
-        "file",
-        "statement",
-        "letter",
-        "official record",
-    ]
-
-    if any(word in text for word in document_words):
-        return "document"
-
-    evidence_words = [
-        "evidence",
-        "clue",
-        "proof",
-        "discovered",
-        "found",
-        "investigation",
-        "investigators",
-        "detective",
-        "police",
-        "authorities",
-        "search",
-    ]
-
-    if any(word in text for word in evidence_words):
-        return "evidence"
-
-    quote_words = [
-        "said",
-        "stated",
-        "according to",
-        "told",
-        "explained",
-        "claimed",
-    ]
-
-    if any(word in text for word in quote_words):
-        return "quote"
-
-    statistics_words = [
-        "%",
-        "percent",
-        "million",
-        "billion",
-        "thousand",
-        "statistics",
-        "population",
-        "number",
-        "rate",
-    ]
-
-    if any(word in text for word in statistics_words):
-        return "statistics"
-
-    return "cinematic"
+    return "cinematic_text"
 
 
 def visual_description(visual_type: str):
     descriptions = {
         "map": (
-            "Cinematic map visualization with location markers "
-            "and animated route."
+            "Cinematic map visualization with "
+            "location markers and animated route."
         ),
         "location": (
-            "Cinematic location card with geographic context."
+            "Cinematic location card with "
+            "geographic context."
         ),
         "timeline": (
-            "Cinematic timeline highlighting the referenced date "
-            "or event."
+            "Cinematic timeline highlighting "
+            "the referenced date or event."
         ),
         "newspaper": (
-            "Newspaper-style reconstruction clearly presented "
-            "as a visual reconstruction."
+            "Newspaper-style reconstruction clearly "
+            "presented as a visual reconstruction."
         ),
         "document": (
-            "Document or report reconstruction with source-status "
-            "treatment."
+            "Document or report reconstruction "
+            "with source-status treatment."
         ),
         "evidence": (
-            "Evidence-board visualization connecting relevant "
-            "clues and facts."
+            "Evidence-board visualization connecting "
+            "relevant clues and facts."
         ),
         "quote": (
-            "Clean cinematic quotation card highlighting the "
-            "spoken statement."
+            "Clean cinematic quotation card "
+            "highlighting the spoken statement."
         ),
-        "statistics": (
-            "Cinematic statistics visualization using counters "
-            "or charts."
+        "statistic": (
+            "Cinematic statistics visualization "
+            "using counters or charts."
         ),
-        "cinematic": (
-            "Cinematic documentary visual using typography, "
-            "shapes, atmosphere and controlled motion."
+        "location": (
+            "Cinematic location card with "
+            "geographic context."
+        ),
+        "cinematic_text": (
+            "Cinematic documentary visual using "
+            "typography, shapes, atmosphere "
+            "and controlled motion."
         ),
     }
 
     return descriptions.get(
         visual_type,
-        descriptions["cinematic"],
+        descriptions["cinematic_text"],
     )
 
 
-def build_visual_plan(story, word_timings):
+def build_visual_plan(
+    story,
+    word_timings,
+):
     sentences = story.get("sentences", [])
 
     if not sentences:
-        raise ValueError("story.json contains no sentences.")
+        raise ValueError(
+            "story.json contains no sentences."
+        )
 
     beats = []
     word_index = 0
 
     for sentence_item in sentences:
         sentence_id = sentence_item.get("id")
+
         sentence = normalize_text(
             sentence_item.get("text", "")
         )
@@ -270,7 +448,9 @@ def build_visual_plan(story, word_timings):
 
         word_index = new_word_index
 
-        visual_type = detect_visual_type(sentence)
+        visual_type = detect_visual_type(
+            sentence
+        )
 
         is_reconstruction = visual_type in {
             "newspaper",
@@ -278,21 +458,34 @@ def build_visual_plan(story, word_timings):
             "evidence",
         }
 
+        visual_data = extract_visual_data(
+            sentence,
+            visual_type,
+        )
+
         beat = {
             "id": f"beat-{sentence_id}",
             "sentence_id": sentence_id,
             "text": sentence,
+
             "start": timing["start"],
             "end": timing["end"],
+
             "duration": round(
                 timing["end"] - timing["start"],
                 4,
             ),
+
             "visual_type": visual_type,
+
             "description": visual_description(
                 visual_type
             ),
+
+            "data": visual_data,
+
             "reconstruction": is_reconstruction,
+
             "source_status": (
                 "reconstruction"
                 if is_reconstruction
@@ -313,10 +506,14 @@ def build_visual_plan(story, word_timings):
     )
 
     plan = {
-        "version": 1,
-        "duration": round(duration, 4),
+        "version": 2,
+        "duration": round(
+            duration,
+            4,
+        ),
         "beat_count": len(beats),
         "beats": beats,
+
         "rules": {
             "maps_for_routes": True,
             "location_cards": True,
@@ -327,7 +524,12 @@ def build_visual_plan(story, word_timings):
             "quote_cards": True,
             "statistics_visuals": True,
             "cinematic_default": True,
+
             "generated_visuals_are_not_archival_evidence": True,
+
+            "reconstruction_label_required": True,
+
+            "automatic_visual_selection": True,
         },
     }
 
@@ -339,7 +541,10 @@ def main():
     print("GENERATING VISUAL PLAN")
     print("=" * 60)
 
-    story = load_json(STORY_FILE)
+    story = load_json(
+        STORY_FILE
+    )
+
     word_timings = load_word_timings()
 
     plan = build_visual_plan(
@@ -362,13 +567,18 @@ def main():
     )
 
     print(
-        f"Visual beats generated: {plan['beat_count']}"
+        f"Visual beats generated: "
+        f"{plan['beat_count']}"
     )
+
     print(
-        f"Story duration: {plan['duration']:.2f}s"
+        f"Story duration: "
+        f"{plan['duration']:.2f}s"
     )
+
     print(
-        f"Visual plan written to: {OUTPUT_FILE}"
+        f"Visual plan written to: "
+        f"{OUTPUT_FILE}"
     )
 
 
