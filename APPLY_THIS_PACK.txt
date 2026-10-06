@@ -1,0 +1,7 @@
+FIRST STEP LEARNER — DOCUMENTARY QUALITY PACK
+
+Replace/add the files in this ZIP at the same paths. Do not replace Root.tsx, AudioLayer.tsx, asset.ts, engineTypes.ts, build_story.py, generate_voice.py, generate_subtitles.py, validate_pipeline.py, narration.txt or render.yml from this pack.
+
+The map system uses an included equirectangular world SVG plus automatic geocoding. generate_visual_plan.py runs geocode_locations.py automatically and stores cached coordinates in generated/geocode_cache.json.
+
+After applying: npm install -> python scripts/build_story.py -> npm run build
