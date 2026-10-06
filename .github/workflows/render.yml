@@ -8,43 +8,79 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------------------------------
+      # 1. Checkout repository
+      # --------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # --------------------------------------------------
+      # 2. Setup Node.js
+      # --------------------------------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
+      # --------------------------------------------------
+      # 3. Setup Python
+      # --------------------------------------------------
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
+      # --------------------------------------------------
+      # 4. Install Python dependencies
+      # --------------------------------------------------
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install edge-tts mutagen
 
-      - name: Generate English voiceover
-        run: |
-          python scripts/generate_voice.py
-
+      # --------------------------------------------------
+      # 5. Install Node dependencies
+      # --------------------------------------------------
       - name: Install Node dependencies
         run: |
           npm install
 
+      # --------------------------------------------------
+      # 6. Build complete story pipeline
+      #
+      # This automatically runs:
+      # generate_voice.py
+      # analyze_script.py
+      # generate_visual_plan.py
+      # generate_subtitles.py
+      # prepare_assets.py
+      # validate_pipeline.py
+      # --------------------------------------------------
       - name: Build story pipeline
         run: |
           python scripts/build_story.py
 
+      # --------------------------------------------------
+      # 7. Render final Remotion video
+      #
+      # Final video includes:
+      # narration
+      # background music
+      # ambience
+      # visuals
+      # subtitles
+      # --------------------------------------------------
       - name: Render Remotion video
         run: |
           npm run build
 
+      # --------------------------------------------------
+      # 8. Upload ONLY the final video
+      # --------------------------------------------------
       - name: Upload final video
         uses: actions/upload-artifact@v4
         with:
           name: first-step-learner-video
           path: out/video.mp4
+          if-no-files-found: error
           retention-days: 7
