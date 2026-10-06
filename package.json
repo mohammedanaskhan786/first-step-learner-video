@@ -1,6 +1,6 @@
 {
   "name": "first-step-learner-video",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "build": "remotion render remotion/index.ts FirstStepLearner out/video.mp4"
