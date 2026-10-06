@@ -1,4 +1,4 @@
-import React from 'react';
-import {AbsoluteFill,Img,staticFile} from 'remotion';
-import {SourceBadge} from './SourceBadge';
-export const DocumentPanel:React.FC<{src?:string;title?:string;text?:string}>=({src,title='DOCUMENT',text=''})=><AbsoluteFill style={{alignItems:'center',justifyContent:'center'}}>{src?<Img src={staticFile(src)} style={{width:1480,height:820,objectFit:'contain'}}/>:<div style={{width:1180,minHeight:720,padding:70,background:'#efede8',color:'#26231f'}}><div style={{fontSize:44,fontWeight:800}}>{title}</div><div style={{marginTop:40,fontSize:28,lineHeight:1.4}}>{text}</div></div>}<SourceBadge reconstructed/></AbsoluteFill>;
+import React from "react";
+import {AbsoluteFill,Img,staticFile} from "remotion";
+import {SourceBadge} from "./SourceBadge";
+export const DocumentPanel:React.FC<{src?:string;title?:string;text?:string}>=({src,title="DOCUMENT",text=""})=><AbsoluteFill style={{alignItems:"center",justifyContent:"center",padding:70}}>{src?<Img src={staticFile(src)} style={{width:1500,height:830,objectFit:"contain"}}/>:<div style={{width:1320,minHeight:760,padding:70,background:"#eeece7",color:"#25221f",boxShadow:"0 25px 80px rgba(0,0,0,.45)",transform:"rotate(-.4deg)"}}><div style={{fontSize:18,letterSpacing:5,color:"#77716b"}}>DOCUMENT RECONSTRUCTION</div><div style={{marginTop:20,fontSize:48,fontWeight:900}}>{title}</div><div style={{marginTop:38,fontSize:29,lineHeight:1.5}}>{text}</div></div>}<SourceBadge reconstructed/></AbsoluteFill>;
