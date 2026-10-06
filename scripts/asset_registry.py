@@ -1,15 +1,15 @@
-from dataclasses import dataclass, asdict
+from pathlib import Path
 
-@dataclass
-class AssetRecord:
-    id: str
-    path: str
-    kind: str
-    status: str = "ready"
-    origin: str = "pipeline"
-    label: str | None = None
-    source: str | None = None
-    reconstructed: bool = False
+ROOT=Path(__file__).resolve().parent.parent
+PUBLIC=ROOT/"public"
 
-def make_record(asset_id, path, kind, status="ready", origin="pipeline", label=None, source=None, reconstructed=False):
-    return asdict(AssetRecord(asset_id, path, kind, status, origin, label, source, reconstructed))
+def asset_path(kind: str, name: str) -> str:
+    clean=str(name).lstrip("/")
+    return f"{kind.strip('/')}/{clean}"
+
+def existing_asset(kind: str, name: str):
+    rel=asset_path(kind,name); path=PUBLIC/rel
+    return rel if path.exists() else None
+
+def manifest_entry(kind: str, source: str, generated=False):
+    return {"kind":kind,"source":source,"generated":generated}
