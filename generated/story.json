@@ -1,16 +1,343 @@
 {
-  "version": 2,
-  "title": "AUTO STORY",
-  "subtitle": "Narration-driven documentary",
-  "fps": 30,
-  "narration": "audio/narration.mp3",
-  "music": "music/investigation.mp3",
-  "ambience": "audio/ambience/atmosphere.mp3",
-  "visualBeats": [],
-  "subtitles": [],
-  "assets": [],
-  "sources": [],
-  "locations": [],
-  "dates": [],
-  "years": []
+  "version": 1,
+  "title": "On the night of August 21, 1986, something happened at Lake Nyos in Cameroon that seemed almost impossible.",
+  "narration": {
+    "source": "narration.txt",
+    "sentence_count": 72
+  },
+  "sentences": [
+    {
+      "id": 0,
+      "text": "On the night of August 21, 1986, something happened at Lake Nyos in Cameroon that seemed almost impossible."
+    },
+    {
+      "id": 1,
+      "text": "There was no massive earthquake."
+    },
+    {
+      "id": 2,
+      "text": "No obvious volcanic eruption."
+    },
+    {
+      "id": 3,
+      "text": "And no warning that could prepare the people living nearby."
+    },
+    {
+      "id": 4,
+      "text": "Yet, by the following morning, entire communities had been devastated."
+    },
+    {
+      "id": 5,
+      "text": "More than 1,700 people had died."
+    },
+    {
+      "id": 6,
+      "text": "And the strange part was this:\n\nThe danger had come from something they could not see."
+    },
+    {
+      "id": 7,
+      "text": "Something they could not smell reliably."
+    },
+    {
+      "id": 8,
+      "text": "And something that had been quietly building beneath the surface of an ordinary-looking lake."
+    },
+    {
+      "id": 9,
+      "text": "This is the story of Lake Nyos."
+    },
+    {
+      "id": 10,
+      "text": "Lake Nyos sits inside an old volcanic crater in northwestern Cameroon."
+    },
+    {
+      "id": 11,
+      "text": "From the surface, it looks like a peaceful mountain lake."
+    },
+    {
+      "id": 12,
+      "text": "But deep beneath its water, carbon dioxide was slowly accumulating."
+    },
+    {
+      "id": 13,
+      "text": "The gas came from geological processes deep underground."
+    },
+    {
+      "id": 14,
+      "text": "Over a long period of time, carbon dioxide dissolved into the deep water of the lake."
+    },
+    {
+      "id": 15,
+      "text": "Normally, this might not seem unusual."
+    },
+    {
+      "id": 16,
+      "text": "But Lake Nyos had a dangerous combination of conditions."
+    },
+    {
+      "id": 17,
+      "text": "Its deep water could remain separated from the water above it."
+    },
+    {
+      "id": 18,
+      "text": "That meant enormous quantities of carbon dioxide could stay dissolved under pressure, rather than escaping into the atmosphere."
+    },
+    {
+      "id": 19,
+      "text": "For years, the lake could quietly hold this invisible gas."
+    },
+    {
+      "id": 20,
+      "text": "Until something disturbed that balance."
+    },
+    {
+      "id": 21,
+      "text": "On the evening of August 21, people near Lake Nyos heard a strange rumbling sound."
+    },
+    {
+      "id": 22,
+      "text": "Then something happened that scientists would later describe as a catastrophic gas release."
+    },
+    {
+      "id": 23,
+      "text": "A huge quantity of carbon dioxide suddenly escaped from the lake."
+    },
+    {
+      "id": 24,
+      "text": "The gas was invisible."
+    },
+    {
+      "id": 25,
+      "text": "And because carbon dioxide is denser than ordinary air, the released gas could move downhill and collect in lower areas."
+    },
+    {
+      "id": 26,
+      "text": "That made nearby valleys and settlements especially vulnerable."
+    },
+    {
+      "id": 27,
+      "text": "People who were close to the lake had almost no way of knowing what was happening."
+    },
+    {
+      "id": 28,
+      "text": "There was no visible wall of gas approaching them."
+    },
+    {
+      "id": 29,
+      "text": "There was no ordinary warning system."
+    },
+    {
+      "id": 30,
+      "text": "Just an invisible change in the air."
+    },
+    {
+      "id": 31,
+      "text": "By the time investigators arrived, the scale of the disaster was difficult to understand."
+    },
+    {
+      "id": 32,
+      "text": "At least 1,700 people had died."
+    },
+    {
+      "id": 33,
+      "text": "Thousands of animals were also lost."
+    },
+    {
+      "id": 34,
+      "text": "The event affected several communities around the lake."
+    },
+    {
+      "id": 35,
+      "text": "And the scene raised an extraordinary question:\n\nHow could a lake apparently cause a disaster on this scale?"
+    },
+    {
+      "id": 36,
+      "text": "The answer was not an explosion in the traditional sense."
+    },
+    {
+      "id": 37,
+      "text": "It was chemistry, geology, pressure, and the unusual behavior of a volcanic lake coming together in a catastrophic way."
+    },
+    {
+      "id": 38,
+      "text": "But there was another mystery."
+    },
+    {
+      "id": 39,
+      "text": "What exactly triggered the sudden release?"
+    },
+    {
+      "id": 40,
+      "text": "Scientists have proposed different mechanisms."
+    },
+    {
+      "id": 41,
+      "text": "One possibility involved a disturbance of the lake water, potentially caused by a landslide."
+    },
+    {
+      "id": 42,
+      "text": "Other early scientific discussions considered different physical processes that might have destabilized the gas-rich deep water."
+    },
+    {
+      "id": 43,
+      "text": "The important point is that the buildup of carbon dioxide was well supported by scientific investigation."
+    },
+    {
+      "id": 44,
+      "text": "But identifying the precise trigger was more complicated."
+    },
+    {
+      "id": 45,
+      "text": "That distinction matters."
+    },
+    {
+      "id": 46,
+      "text": "A real scientific explanation does not always mean every detail of an event is known with certainty."
+    },
+    {
+      "id": 47,
+      "text": "After the disaster, scientists began studying Lake Nyos much more carefully."
+    },
+    {
+      "id": 48,
+      "text": "They discovered that the danger was not simply a historical curiosity."
+    },
+    {
+      "id": 49,
+      "text": "Carbon dioxide was still present deep inside the lake."
+    },
+    {
+      "id": 50,
+      "text": "So scientists and engineers developed a way to remove the gas gradually."
+    },
+    {
+      "id": 51,
+      "text": "Pipes were installed to bring gas-rich deep water toward the surface."
+    },
+    {
+      "id": 52,
+      "text": "As the pressure changed, dissolved carbon dioxide could escape in a controlled way."
+    },
+    {
+      "id": 53,
+      "text": "It was an unusual engineering response to an equally unusual natural hazard."
+    },
+    {
+      "id": 54,
+      "text": "Instead of trying to empty the lake, the goal was to reduce the dangerous concentration of dissolved gas."
+    },
+    {
+      "id": 55,
+      "text": "Lake Nyos changed the way scientists understood a rare but serious hazard associated with certain volcanic lakes."
+    },
+    {
+      "id": 56,
+      "text": "It also demonstrated something important about natural disasters."
+    },
+    {
+      "id": 57,
+      "text": "Sometimes the most dangerous events do not look dramatic at first."
+    },
+    {
+      "id": 58,
+      "text": "There may be no giant flame."
+    },
+    {
+      "id": 59,
+      "text": "No visible wave."
+    },
+    {
+      "id": 60,
+      "text": "No obvious warning."
+    },
+    {
+      "id": 61,
+      "text": "Just a physical process happening quietly beneath the surface."
+    },
+    {
+      "id": 62,
+      "text": "And when that process suddenly changes, the consequences can be enormous."
+    },
+    {
+      "id": 63,
+      "text": "Today, Lake Nyos is remembered not only because of the tragedy of 1986, but also because it became an important scientific case study."
+    },
+    {
+      "id": 64,
+      "text": "A reminder that nature can store enormous amounts of energy and material in places that appear completely peaceful."
+    },
+    {
+      "id": 65,
+      "text": "And sometimes, the biggest mystery is not what happened."
+    },
+    {
+      "id": 66,
+      "text": "It is how something so dangerous could remain invisible until the moment it was too late."
+    },
+    {
+      "id": 67,
+      "text": "This was Lake Nyos."
+    },
+    {
+      "id": 68,
+      "text": "A quiet lake."
+    },
+    {
+      "id": 69,
+      "text": "A hidden geological process."
+    },
+    {
+      "id": 70,
+      "text": "And one of the most unusual natural disasters ever investigated."
+    },
+    {
+      "id": 71,
+      "text": "Allah knows best."
+    }
+  ],
+  "entities": {
+    "locations": [
+      "Cameroon",
+      "Lake Nyos"
+    ],
+    "years": [
+      1986
+    ]
+  },
+  "detected_topics": {
+    "map": [
+      "from",
+      "to",
+      "arrived"
+    ],
+    "evidence": [
+      "discovered"
+    ],
+    "investigation": [
+      "investigation",
+      "investigators"
+    ],
+    "quote": [
+      "stated"
+    ],
+    "statistics": [
+      "thousand"
+    ]
+  },
+  "editorial_status": {
+    "confirmed_facts": [],
+    "reported_claims": [],
+    "uncertainties": [],
+    "unanswered_questions": []
+  },
+  "visual_requirements": {
+    "maps": true,
+    "timelines": true,
+    "documents": false,
+    "newspapers": false,
+    "evidence": true,
+    "investigation": true,
+    "quotes": true,
+    "statistics": true
+  }
 }
