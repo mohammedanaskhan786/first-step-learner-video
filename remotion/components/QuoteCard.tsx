@@ -1,3 +1,3 @@
-import React from "react";
-import {AbsoluteFill,interpolate,useCurrentFrame} from "remotion";
-export const QuoteCard:React.FC<{quote?:string;attribution?:string}>=({quote="",attribution=""})=>{const o=interpolate(useCurrentFrame(),[0,12],[0,1],{extrapolateRight:"clamp"});return <AbsoluteFill style={{alignItems:"center",justifyContent:"center",padding:160,textAlign:"center",opacity:o,background:"radial-gradient(circle at 50% 50%,rgba(123,47,247,.12),transparent 55%)"}}><div style={{maxWidth:1400}}><div style={{fontSize:105,lineHeight:.7,color:"#9c80cf",fontFamily:"Georgia"}}>“</div><div style={{fontSize:52,lineHeight:1.3,fontWeight:700}}>{quote}</div>{attribution&&<div style={{marginTop:28,fontSize:23,color:"#aaa3b3"}}>— {attribution}</div>}</div></AbsoluteFill>};
+import React from 'react';
+import {AbsoluteFill} from 'remotion';
+export const QuoteCard:React.FC<{quote?:string;attribution?:string}>=({quote='',attribution=''})=><AbsoluteFill style={{alignItems:'center',justifyContent:'center',padding:180,textAlign:'center'}}><div style={{maxWidth:1350}}><div style={{fontSize:110,color:'#9c80cf',fontFamily:'Georgia'}}>“</div><div style={{fontSize:53,lineHeight:1.28,fontWeight:700}}>{quote}</div>{attribution?<div style={{marginTop:30,color:'#aaa3b3',fontSize:24}}>— {attribution}</div>:null}</div></AbsoluteFill>;

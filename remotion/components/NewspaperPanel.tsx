@@ -1,4 +1,4 @@
-import React from "react";
-import {AbsoluteFill,Img,staticFile} from "remotion";
-import {SourceBadge} from "./SourceBadge";
-export const NewspaperPanel:React.FC<{src?:string;title?:string;text?:string}>=({src,title="THE DAILY RECORD",text=""})=><AbsoluteFill style={{alignItems:"center",justifyContent:"center",padding:65,background:"radial-gradient(circle at 50% 50%,rgba(255,255,255,.04),transparent 60%)"}}>{src?<Img src={staticFile(src)} style={{width:1560,height:860,objectFit:"contain"}}/>:<div style={{width:1500,minHeight:800,padding:62,background:"#e8e2d8",color:"#1d1a17",boxShadow:"0 24px 70px rgba(0,0,0,.5)"}}><div style={{textAlign:"center",fontSize:20,letterSpacing:6}}>RECONSTRUCTED NEWSPAPER</div><div style={{marginTop:20,borderTop:"5px solid #1d1a17",borderBottom:"2px solid #1d1a17",padding:"20px 0",fontSize:58,fontWeight:900}}>{title}</div><div style={{marginTop:34,fontSize:29,lineHeight:1.5,columnCount:2,columnGap:45}}>{text}</div></div>}<SourceBadge reconstructed/></AbsoluteFill>;
+import React from 'react';
+import {AbsoluteFill,Img,staticFile} from 'remotion';
+import {SourceBadge} from './SourceBadge';
+export const NewspaperPanel:React.FC<{src?:string;title?:string;text?:string}>=({src,title='NEWSPAPER',text=''})=><AbsoluteFill style={{alignItems:'center',justifyContent:'center'}}>{src?<Img src={staticFile(src)} style={{width:1560,height:830,objectFit:'contain'}}/>:<div style={{width:1480,minHeight:760,padding:65,background:'#e5e0d8',color:'#1d1b19'}}><div style={{fontSize:42,fontWeight:800}}>{title}</div><div style={{marginTop:35,fontSize:30,lineHeight:1.4}}>{text}</div></div>}<SourceBadge reconstructed/></AbsoluteFill>;

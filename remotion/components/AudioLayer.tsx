@@ -1,36 +1,68 @@
 import React from "react";
-import { AbsoluteFill, Audio } from "remotion";
+import { AbsoluteFill, Audio, Sequence } from "remotion";
 import { asset } from "../asset";
+
+interface SFXItem {
+  src: string;
+  at: number;
+  volume?: number;
+}
 
 interface AudioLayerProps {
   narration?: string;
   music?: string;
   ambience?: string;
+  sfx?: SFXItem[];
+  fps: number;
 }
 
 export const AudioLayer: React.FC<AudioLayerProps> = ({
-  narration = "audio/narration.mp3",
-  music = "music/investigation.mp3",
-  ambience = "audio/ambience/atmosphere.mp3",
+  narration,
+  music,
+  ambience,
+  sfx = [],
+  fps,
 }) => {
   return (
-    <AbsoluteFill style={{ pointerEvents: "none" }}>
-      <Audio
-        src={asset(narration)}
-        volume={1}
-      />
+    <AbsoluteFill
+      style={{
+        pointerEvents: "none",
+      }}
+    >
+      {narration && (
+        <Audio
+          src={asset(narration)}
+          volume={1}
+        />
+      )}
 
-      <Audio
-        src={asset(music)}
-        volume={0.075}
-        loop
-      />
+      {music && (
+        <Audio
+          src={asset(music)}
+          volume={0.075}
+          loop
+        />
+      )}
 
-      <Audio
-        src={asset(ambience)}
-        volume={0.035}
-        loop
-      />
+      {ambience && (
+        <Audio
+          src={asset(ambience)}
+          volume={0.035}
+          loop
+        />
+      )}
+
+      {sfx.map((item, index) => (
+        <Sequence
+          key={`${item.src}-${index}`}
+          from={Math.max(0, Math.floor(item.at * fps))}
+        >
+          <Audio
+            src={asset(item.src)}
+            volume={item.volume ?? 0.3}
+          />
+        </Sequence>
+      ))}
     </AbsoluteFill>
   );
 };
