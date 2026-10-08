@@ -1,78 +1,376 @@
-import json, re, subprocess, sys
+import json
+import re
 from pathlib import Path
 
-ROOT=Path(__file__).resolve().parent.parent; GENERATED=ROOT/"generated"
-STORY_FILE=GENERATED/"story.json"; TIMINGS_FILE=GENERATED/"word_timings.json"; OUTPUT_FILE=GENERATED/"visual_plan.json"
+ROOT = Path(__file__).resolve().parent.parent
+GENERATED_DIR = ROOT / "generated"
 
-def load(path):
-    if not path.exists(): raise FileNotFoundError(path)
-    return json.loads(path.read_text(encoding="utf-8"))
+STORY_FILE = GENERATED_DIR / "story.json"
+TIMINGS_FILE = GENERATED_DIR / "word_timings.json"
+OUTPUT_FILE = GENERATED_DIR / "visual_plan.json"
 
-def norm(text): return re.sub(r"\s+"," ",str(text or "")).strip()
 
-def sentence_time_range(sentence, words, cursor):
-    n=len(re.findall(r"\S+",sentence)); selected=words[cursor:cursor+n]
-    if not selected: return None,cursor
-    return {"start":float(selected[0]["start"]),"end":float(selected[-1]["end"])},cursor+n
+def load_json(path: Path):
+    if not path.exists():
+        raise FileNotFoundError(f"Missing required file: {path}")
 
-def location_candidates(sentence):
-    patterns=[r"\b(?:in|at|near|inside|outside|from|to|toward|towards)\s+([A-Z][A-Za-z0-9'’-]*(?:\s+[A-Z][A-Za-z0-9'’-]*){0,5})"]
-    out=[]
-    for p in patterns:
-        out.extend(re.findall(p,sentence))
-    return [norm(x).strip(" ,.;:") for x in out if len(norm(x))>1]
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Invalid JSON file: {path}") from exc
 
-def detect_type(sentence, index, total):
-    t=sentence.lower()
-    # Route only when a destination/origin relation is explicit; avoids false maps like "from the surface".
-    if re.search(r"\bfrom\s+[A-Z][A-Za-z0-9'’-]*(?:\s+[A-Z][A-Za-z0-9'’-]*){0,4}\s+(?:to|toward|towards)\s+[A-Z]", sentence) or any(x in t for x in ["route between","traveled from","travelled from","journey from","moved from","crossed into"]): return "map"
-    if re.search(r"\b(?:18|19|20)\d{2}\b",sentence) or any(x in t for x in ["years later","months later","days later","the next day","the following year","later that year"]): return "timeline"
-    if any(x in t for x in ["newspaper","headline","front page","article","press report"]): return "newspaper"
-    if any(x in t for x in ["report","official record","document","file","statement","letter"]): return "document"
-    if any(x in t for x in ["evidence","clue","proof","trace","remains","discovered","found"]): return "evidence"
-    if any(x in t for x in ["investigation","investigators","detective","police","authorities","search"]): return "evidence"
-    if any(x in t for x in ["according to","said","stated","told","explained","claimed"]): return "quote"
-    if re.search(r"\b\d+(?:\.\d+)?\s*(?:%|percent|million|billion|thousand)\b",sentence,re.I): return "statistic"
-    if location_candidates(sentence): return "location"
-    if index==0: return "cold_open"
-    if index==total-1: return "ending"
-    # Controlled cinematic fallback; this is intentionally not a visual change every sentence.
-    return "cinematic_text"
 
-def extract_year(s):
-    m=re.search(r"\b(?:17|18|19|20)\d{2}\b",s); return m.group(0) if m else ""
+def load_word_timings():
+    data = load_json(TIMINGS_FILE)
+    words = data.get("words", [])
 
-def build():
-    story=load(STORY_FILE); timing=load(TIMINGS_FILE); words=timing.get("words",[])
-    if not words: raise ValueError("No word timings")
-    # Geocode as part of the same automatic build; cache keeps repeated stories cheap.
-    geo_script=ROOT/"scripts"/"geocode_locations.py"
-    subprocess.run([sys.executable,str(geo_script)],check=False)
-    geocodes=load(GENERATED/"geocodes.json") if (GENERATED/"geocodes.json").exists() else {}
-    beats=[]; cursor=0; sentences=story.get("sentences",[])
-    for i,item in enumerate(sentences):
-        sentence=norm(item.get("text","")); tr,cursor2=sentence_time_range(sentence,words,cursor)
-        if not tr: continue
-        cursor=cursor2; vtype=detect_type(sentence,i,len(sentences)); locs=location_candidates(sentence)
-        year=extract_year(sentence)
-        # Prefer sentence-local locations; otherwise use the first story location for location cards.
-        loc=locs[0] if locs else (story.get("entities",{}).get("locations") or [""])[0]
-        from_name=locs[0] if len(locs)>=1 else ""
-        to_name=locs[1] if len(locs)>=2 else ""
-        if vtype=="map" and (not from_name or not to_name):
-            vtype="location" if loc else "cinematic_text"
-        data={"location":loc,"date":year,"event":sentence,"quote":sentence,"sourceStatus":"narration_context","reconstruction":vtype in {"document","newspaper","evidence"}}
-        if from_name: data["from"]=from_name
-        if to_name: data["to"]=to_name
-        if from_name and to_name: data["coordinates"]={"from":geocodes.get(from_name),"to":geocodes.get(to_name)}
-        elif loc and geocodes.get(loc): data["coordinates"]={"location":geocodes.get(loc)}
-        if vtype=="statistic":
-            m=re.search(r"\b\d+(?:\.\d+)?\s*(?:%|percent|million|billion|thousand)?\b",sentence,re.I)
-            data["value"]=m.group(0) if m else ""
-            data["label"]=sentence
-        beats.append({"id":f"beat-{i:04d}","sentence_id":item.get("id",i),"start":round(tr["start"],4),"end":round(tr["end"],4),"duration":round(tr["end"]-tr["start"],4),"visual_type":vtype,"description":vtype,"text":sentence,"data":data,"reconstruction":data["reconstruction"],"source_status":data["sourceStatus"]})
-    duration=float(timing.get("duration",0))
-    plan={"version":3,"fps":30,"duration":duration,"beats":beats,"rules":{"real_map_when_coordinates_exist":True,"maps_for_explicit_routes_only":True,"location_cards":True,"timeline_for_dates":True,"reconstruction_labels":True,"target_visual_beat_seconds":"8-18"}}
-    OUTPUT_FILE.write_text(json.dumps(plan,ensure_ascii=False,indent=2),encoding="utf-8")
-    print(f"Visual plan: {len(beats)} beats / {duration:.2f}s")
-if __name__=="__main__": build()
+    if not isinstance(words, list) or not words:
+        raise ValueError("No word timings found.")
+
+    return words
+
+
+def normalize_text(text: str) -> str:
+    return re.sub(r"\s+", " ", text.strip())
+
+
+def sentence_time_range(sentence_text: str, words, search_from: int):
+    target_words = re.findall(r"\S+", sentence_text)
+
+    if not target_words:
+        return None, search_from
+
+    target_count = len(target_words)
+
+    if search_from >= len(words):
+        return None, search_from
+
+    end_index = min(
+        search_from + target_count,
+        len(words),
+    )
+
+    selected = words[search_from:end_index]
+
+    if not selected:
+        return None, search_from
+
+    start = float(selected[0]["start"])
+    end = float(selected[-1]["end"])
+
+    return {
+        "start": round(start, 4),
+        "end": round(end, 4),
+    }, end_index
+
+
+def detect_visual_type(sentence: str):
+    text = sentence.lower()
+
+    route_words = [
+        "from ",
+        " to ",
+        "toward ",
+        "towards ",
+        "route",
+        "travel",
+        "traveled",
+        "travelled",
+        "moved",
+        "arrived",
+        "left ",
+        "crossed",
+        "journey",
+    ]
+
+    if any(word in text for word in route_words):
+        return "map"
+
+    location_words = [
+        "in ",
+        "at ",
+        "near ",
+        "inside ",
+        "outside ",
+        "located",
+        "location",
+        "city",
+        "town",
+        "country",
+        "state",
+        "street",
+        "road",
+        "building",
+    ]
+
+    if any(word in text for word in location_words):
+        return "location"
+
+    if re.search(r"\b(?:18|19|20)\d{2}\b", sentence):
+        return "timeline"
+
+    timeline_words = [
+        "years later",
+        "months later",
+        "days later",
+        "the next day",
+        "the following year",
+        "later that year",
+        "afterward",
+        "afterwards",
+    ]
+
+    if any(word in text for word in timeline_words):
+        return "timeline"
+
+    newspaper_words = [
+        "newspaper",
+        "headline",
+        "front page",
+        "article",
+        "reported",
+        "press",
+        "media",
+    ]
+
+    if any(word in text for word in newspaper_words):
+        return "newspaper"
+
+    document_words = [
+        "report",
+        "record",
+        "document",
+        "file",
+        "statement",
+        "letter",
+        "official record",
+    ]
+
+    if any(word in text for word in document_words):
+        return "document"
+
+    evidence_words = [
+        "evidence",
+        "clue",
+        "proof",
+        "discovered",
+        "found",
+        "investigation",
+        "investigators",
+        "detective",
+        "police",
+        "authorities",
+        "search",
+    ]
+
+    if any(word in text for word in evidence_words):
+        return "evidence"
+
+    quote_words = [
+        "said",
+        "stated",
+        "according to",
+        "told",
+        "explained",
+        "claimed",
+    ]
+
+    if any(word in text for word in quote_words):
+        return "quote"
+
+    statistics_words = [
+        "%",
+        "percent",
+        "million",
+        "billion",
+        "thousand",
+        "statistics",
+        "population",
+        "number",
+        "rate",
+    ]
+
+    if any(word in text for word in statistics_words):
+        return "statistics"
+
+    return "cinematic"
+
+
+def visual_description(visual_type: str):
+    descriptions = {
+        "map": (
+            "Cinematic map visualization with location markers "
+            "and animated route."
+        ),
+        "location": (
+            "Cinematic location card with geographic context."
+        ),
+        "timeline": (
+            "Cinematic timeline highlighting the referenced date "
+            "or event."
+        ),
+        "newspaper": (
+            "Newspaper-style reconstruction clearly presented "
+            "as a visual reconstruction."
+        ),
+        "document": (
+            "Document or report reconstruction with source-status "
+            "treatment."
+        ),
+        "evidence": (
+            "Evidence-board visualization connecting relevant "
+            "clues and facts."
+        ),
+        "quote": (
+            "Clean cinematic quotation card highlighting the "
+            "spoken statement."
+        ),
+        "statistics": (
+            "Cinematic statistics visualization using counters "
+            "or charts."
+        ),
+        "cinematic": (
+            "Cinematic documentary visual using typography, "
+            "shapes, atmosphere and controlled motion."
+        ),
+    }
+
+    return descriptions.get(
+        visual_type,
+        descriptions["cinematic"],
+    )
+
+
+def build_visual_plan(story, word_timings):
+    sentences = story.get("sentences", [])
+
+    if not sentences:
+        raise ValueError("story.json contains no sentences.")
+
+    beats = []
+    word_index = 0
+
+    for sentence_item in sentences:
+        sentence_id = sentence_item.get("id")
+        sentence = normalize_text(
+            sentence_item.get("text", "")
+        )
+
+        if not sentence:
+            continue
+
+        timing, new_word_index = sentence_time_range(
+            sentence,
+            word_timings,
+            word_index,
+        )
+
+        if timing is None:
+            continue
+
+        word_index = new_word_index
+
+        visual_type = detect_visual_type(sentence)
+
+        is_reconstruction = visual_type in {
+            "newspaper",
+            "document",
+            "evidence",
+        }
+
+        beat = {
+            "id": f"beat-{sentence_id}",
+            "sentence_id": sentence_id,
+            "text": sentence,
+            "start": timing["start"],
+            "end": timing["end"],
+            "duration": round(
+                timing["end"] - timing["start"],
+                4,
+            ),
+            "visual_type": visual_type,
+            "description": visual_description(
+                visual_type
+            ),
+            "reconstruction": is_reconstruction,
+            "source_status": (
+                "reconstruction"
+                if is_reconstruction
+                else "narration_context"
+            ),
+        }
+
+        beats.append(beat)
+
+    if not beats:
+        raise RuntimeError(
+            "Visual plan generation produced zero beats."
+        )
+
+    duration = max(
+        float(beat["end"])
+        for beat in beats
+    )
+
+    plan = {
+        "version": 1,
+        "duration": round(duration, 4),
+        "beat_count": len(beats),
+        "beats": beats,
+        "rules": {
+            "maps_for_routes": True,
+            "location_cards": True,
+            "timelines_for_dates": True,
+            "newspaper_reconstructions": True,
+            "document_reconstructions": True,
+            "evidence_visuals": True,
+            "quote_cards": True,
+            "statistics_visuals": True,
+            "cinematic_default": True,
+            "generated_visuals_are_not_archival_evidence": True,
+        },
+    }
+
+    return plan
+
+
+def main():
+    print("=" * 60)
+    print("GENERATING VISUAL PLAN")
+    print("=" * 60)
+
+    story = load_json(STORY_FILE)
+    word_timings = load_word_timings()
+
+    plan = build_visual_plan(
+        story=story,
+        word_timings=word_timings,
+    )
+
+    GENERATED_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    OUTPUT_FILE.write_text(
+        json.dumps(
+            plan,
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    print(
+        f"Visual beats generated: {plan['beat_count']}"
+    )
+    print(
+        f"Story duration: {plan['duration']:.2f}s"
+    )
+    print(
+        f"Visual plan written to: {OUTPUT_FILE}"
+    )
+
+
+if __name__ == "__main__":
+    main()

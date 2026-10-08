@@ -40,6 +40,7 @@ def main():
 
     # Generate visual beats
     run("generate_visual_plan.py")
+    run("generate_animation_plan.py")
 
     # Generate subtitles from the timing map
     run("generate_subtitles.py")
