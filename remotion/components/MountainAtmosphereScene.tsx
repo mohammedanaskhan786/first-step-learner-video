@@ -3,7 +3,7 @@ import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { CameraRig } from "./CameraRig";
 import { ParticleField } from "./ParticleField";
 
-export const MountainAtmosphereScene: React.FC<{ text?: string }> = ({ text }) => {
+export const MountainAtmosphereScene: React.FC = () => {
   const frame = useCurrentFrame();
   const drift = Math.sin(frame / 55) * 18;
 
@@ -29,11 +29,6 @@ export const MountainAtmosphereScene: React.FC<{ text?: string }> = ({ text }) =
 
         <ParticleField count={25} direction="left" opacity={0.12} size={3} />
 
-        {text && (
-          <div style={{ position: "absolute", left: 110, bottom: 100, maxWidth: 900, color: "#fff", fontFamily: "Arial", fontSize: 34, lineHeight: 1.35 }}>
-            {text}
-          </div>
-        )}
       </CameraRig>
     </AbsoluteFill>
   );

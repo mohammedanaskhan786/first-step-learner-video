@@ -1,3 +1,21 @@
-import React from 'react';
-import {AbsoluteFill,interpolate,spring,useCurrentFrame,useVideoConfig} from 'remotion';
-export const CinematicText:React.FC<{title?:string;text?:string;eyebrow?:string}>=({title='REAL STORY',text='',eyebrow='DOCUMENTARY'})=>{const frame=useCurrentFrame();const{fps}=useVideoConfig();const p=spring({frame,fps,config:{damping:20,stiffness:90,mass:.8}});const y=interpolate(p,[0,1],[36,0]);return <AbsoluteFill style={{padding:'150px',justifyContent:'center',background:'radial-gradient(circle at 50% 40%,rgba(123,47,247,.15),transparent 50%)'}}><div style={{transform:`translateY(${y}px)`,opacity:p}}><div style={{fontSize:22,letterSpacing:5,color:'#a99fba',fontWeight:700}}>{eyebrow}</div><div style={{marginTop:18,fontSize:76,lineHeight:1.02,fontWeight:900,maxWidth:1500}}>{title}</div>{text?<div style={{marginTop:28,maxWidth:1400,fontSize:30,lineHeight:1.35,color:'#d4cfda'}}>{text}</div>:null}</div></AbsoluteFill>};
+import React from "react";
+import { AbsoluteFill } from "remotion";
+
+// Visual-only fallback. Narration is carried by the audio track and subtitles;
+// this component intentionally does not print title cards or repeat narration.
+export const CinematicText: React.FC<{ title?: string; text?: string; eyebrow?: string }> = () => (
+  <AbsoluteFill style={{
+    background: "radial-gradient(ellipse at 50% 42%, #17212b 0%, #090b10 48%, #030405 100%)",
+    overflow: "hidden",
+  }}>
+    <div style={{
+      position: "absolute", inset: "-15%",
+      background: "linear-gradient(115deg, transparent 25%, rgba(158,190,220,.07) 48%, transparent 65%)",
+      transform: "rotate(-8deg)",
+    }} />
+    <div style={{
+      position: "absolute", width: 900, height: 900, left: "28%", top: "-28%",
+      borderRadius: "50%", background: "rgba(90,130,165,.06)", filter: "blur(80px)",
+    }} />
+  </AbsoluteFill>
+);

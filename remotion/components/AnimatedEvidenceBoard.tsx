@@ -7,7 +7,6 @@ export const AnimatedEvidenceBoard: React.FC<{ items: string[] }> = ({ items }) 
 
   return (
     <AbsoluteFill style={{ background: "#101114", color: "#fff", padding: 90, fontFamily: "Arial" }}>
-      <div style={{ fontSize: 22, letterSpacing: 5, opacity: .55 }}>EVIDENCE BOARD — RECONSTRUCTION</div>
 
       <svg width="100%" height="100%" viewBox="0 0 1920 1080" style={{ position: "absolute", inset: 0 }}>
         {items.map((_, i) => {

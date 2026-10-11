@@ -3,10 +3,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remo
 import { CameraRig } from "./CameraRig";
 import { ParticleField } from "./ParticleField";
 
-export const WaterGasScene: React.FC<{ title?: string; text?: string }> = ({
-  title = "BENEATH THE SURFACE",
-  text,
-}) => {
+export const WaterGasScene: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = interpolate(frame, [0, 12 * fps], [0, 1], {
@@ -63,19 +60,6 @@ export const WaterGasScene: React.FC<{ title?: string; text?: string }> = ({
 
           <ParticleField count={35} direction="up" opacity={0.16} size={4} />
 
-          <div style={{ position: "absolute", left: 110, top: 100, maxWidth: 900, fontFamily: "Arial" }}>
-            <div style={{ fontSize: 22, letterSpacing: 6, opacity: .6 }}>
-              SCIENTIFIC RECONSTRUCTION
-            </div>
-            <div style={{ fontSize: 64, fontWeight: 700, marginTop: 12 }}>
-              {title}
-            </div>
-            {text && (
-              <div style={{ fontSize: 30, lineHeight: 1.35, marginTop: 20, opacity: .82 }}>
-                {text}
-              </div>
-            )}
-          </div>
         </AbsoluteFill>
       </CameraRig>
     </AbsoluteFill>

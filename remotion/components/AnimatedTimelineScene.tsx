@@ -9,7 +9,6 @@ export const AnimatedTimelineScene: React.FC<{
 
   return (
     <AbsoluteFill style={{ background: "#09090b", color: "#fff", padding: "120px 150px", fontFamily: "Arial" }}>
-      <div style={{ fontSize: 22, letterSpacing: 5, opacity: .55 }}>TIMELINE</div>
       <div style={{ position: "absolute", left: 180, right: 180, top: 540, height: 4, background: "#33303a" }} />
       {events.map((event, i) => {
         const start = i * 0.8 * fps;
