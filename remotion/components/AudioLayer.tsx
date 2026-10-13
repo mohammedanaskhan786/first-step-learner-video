@@ -39,7 +39,7 @@ export const AudioLayer: React.FC<AudioLayerProps> = ({
       {music && (
         <Audio
           src={asset(music)}
-          volume={0.075}
+          volume={0.12}
           loop
         />
       )}
@@ -47,7 +47,7 @@ export const AudioLayer: React.FC<AudioLayerProps> = ({
       {ambience && (
         <Audio
           src={asset(ambience)}
-          volume={0.035}
+          volume={0.08}
           loop
         />
       )}
