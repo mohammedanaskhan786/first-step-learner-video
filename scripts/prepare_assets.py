@@ -2,39 +2,49 @@ import json
 import shutil
 from pathlib import Path
 
-ROOT=Path(__file__).resolve().parent.parent
-GENERATED_DIR=ROOT/'generated'
-PUBLIC_DIR=ROOT/'public'
-PLAN_FILE=GENERATED_DIR/'visual_plan.json'
+ROOT = Path(__file__).resolve().parent.parent
+GEN = ROOT / "generated"
+PUBLIC = ROOT / "public"
 
-
-def load_json(path):
-    if not path.exists(): raise FileNotFoundError(f'Missing required file: {path}')
-    return json.loads(path.read_text(encoding='utf-8'))
-
-
-def ensure_directories():
-    for d in [PUBLIC_DIR/'audio',PUBLIC_DIR/'images',PUBLIC_DIR/'documents',PUBLIC_DIR/'maps',PUBLIC_DIR/'generated']:
-        d.mkdir(parents=True,exist_ok=True)
-
+def read(name):
+    path = GEN / name
+    if not path.exists():
+        raise FileNotFoundError(f"Missing generated file: {path}. Run the pipeline first.")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 def main():
-    print('='*60); print('PREPARING RUNTIME ASSETS'); print('='*60)
-    plan=load_json(PLAN_FILE)
-    ensure_directories()
-    for name in ['story.json','visual_plan.json','subtitles.json','assets.json','sources.json','word_timings.json','animation_plan.json']:
-        src=GENERATED_DIR/name
-        if src.exists(): shutil.copy2(src,PUBLIC_DIR/'generated'/name)
-    assets={
-      'version':2,'generated':True,
-      'narration':{'path':'audio/narration.mp3','required':True},
-      'music':{'path':'music/investigation.mp3','required':True},
-      'ambience':{'path':'audio/ambience/atmosphere.mp3','required':True},
-      'visual_assets':sorted({b.get('visual_type','cinematic') for b in plan.get('beats',[])}),
-      'rules':{'missing_assets_use_generated_visuals':True,'no_manual_sfx_required':True,'generated_visuals_are_reconstructions':True}
-    }
-    (GENERATED_DIR/'assets.json').write_text(json.dumps(assets,ensure_ascii=False,indent=2),encoding='utf-8')
-    shutil.copy2(GENERATED_DIR/'assets.json',PUBLIC_DIR/'generated'/'assets.json')
-    print(f"Runtime JSON copied to: {PUBLIC_DIR/'generated'}")
+    (PUBLIC / "audio").mkdir(parents=True, exist_ok=True)
+    (PUBLIC / "generated").mkdir(parents=True, exist_ok=True)
+    audio = PUBLIC / "audio" / "narration.mp3"
+    if not audio.exists() or audio.stat().st_size == 0:
+        raise FileNotFoundError("public/audio/narration.mp3 was not generated")
 
-if __name__=='__main__': main()
+    story = read("story.json")
+    plan = read("visual_plan.json")
+    subtitle_data = read("subtitles.json")
+    assets = read("assets.json")
+    timings = read("word_timings.json")
+
+    type_map = {"statistics": "statistic", "cinematic": "cinematic_text"}
+    visual_beats = []
+    for beat in plan.get("beats", []):
+        visual_type = beat.get("visual_type", "cinematic")
+        mapped = type_map.get(visual_type, visual_type)
+        data = {"location": beat.get("location", ""), "date": beat.get("date", ""), "event": beat.get("text", ""), "quote": beat.get("text", ""), "label": beat.get("text", ""), "items": [beat.get("text", "")]}
+        visual_beats.append({"id": str(beat.get("id", len(visual_beats))), "start": float(beat.get("start", 0)), "end": max(float(beat.get("end", 0)), float(beat.get("start", 0)) + 0.1), "type": mapped, "text": str(beat.get("text", "")), "data": data, "sourceClaimId": str(beat.get("sentence_id", ""))})
+
+    duration = max(float(plan.get("duration", 0)), float(timings.get("duration", 0)), 1.0)
+    runtime = {
+        "version": 2, "title": story.get("title", "Documentary"), "subtitle": "2D animated documentary",
+        "fps": 30, "narration": "audio/narration.mp3", "visualBeats": visual_beats,
+        "subtitles": subtitle_data.get("cues", []), "assets": assets.get("visual_assets", []),
+        "sources": [], "locations": story.get("entities", {}).get("locations", []),
+        "dates": [], "years": story.get("entities", {}).get("years", []), "durationSeconds": duration
+    }
+    (PUBLIC / "generated" / "story.json").write_text(json.dumps(runtime, ensure_ascii=False, indent=2), encoding="utf-8")
+    for name in ("visual_plan.json", "subtitles.json", "assets.json", "word_timings.json", "sources.json"):
+        src = GEN / name
+        if src.exists(): shutil.copy2(src, PUBLIC / "generated" / name)
+    print(f"Runtime story prepared: {len(visual_beats)} 2D visual beats; {duration:.2f}s")
+
+if __name__ == "__main__": main()

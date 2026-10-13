@@ -199,15 +199,14 @@ def detect_visual_type(sentence: str):
 def visual_description(visual_type: str):
     descriptions = {
         "map": (
-            "Cinematic map visualization with location markers "
-            "and animated route."
+            "Flat 2D illustrated map with clear location markers "
+            "and a smoothly animated route."
         ),
         "location": (
-            "Cinematic location card with geographic context."
+            "Flat 2D illustrated location scene with a simple geographic context."
         ),
         "timeline": (
-            "Cinematic timeline highlighting the referenced date "
-            "or event."
+            "Flat 2D timeline with animated date markers and event labels."
         ),
         "newspaper": (
             "Newspaper-style reconstruction clearly presented "
@@ -226,12 +225,11 @@ def visual_description(visual_type: str):
             "spoken statement."
         ),
         "statistics": (
-            "Cinematic statistics visualization using counters "
-            "or charts."
+            "Flat 2D infographic with animated counters, bars, or simple charts."
         ),
         "cinematic": (
-            "Cinematic documentary visual using typography, "
-            "shapes, atmosphere and controlled motion."
+            "Flat 2D documentary illustration using vector-like shapes, "
+            "simple parallax, clear typography and gentle motion."
         ),
     }
 
