@@ -1,0 +1,20 @@
+FIRST STEP LEARNER — 2D DOCUMENTARY UPDATE
+
+This project is configured for 1920x1080, 30fps, flat 2D documentary visuals. It uses generated vector-like scenes, maps, timelines, evidence/document panels, subtitles and English narration. No music, ambience or SFX are required.
+
+Fixes included:
+- generate_voice.py creates word timings proportionally from actual MP3 duration, avoiding empty Edge-TTS word-boundary timing events.
+- prepare_assets.py creates public/generated/story.json with the exact props shape Remotion needs.
+- Root.tsx loads runtime story data and calculates video length from narration timing.
+- MainVideo.tsx renders narration + 2D visual beats + subtitles in one MP4.
+- GitHub Actions runs the pipeline once, then renders out/video.mp4.
+
+Usage:
+1. Edit narration.txt only.
+2. Run: python -m pip install -r scripts/requirements.txt
+3. Run: npm install
+4. Run: python scripts/build_story.py
+5. Run: npm run build
+6. Output: out/video.mp4
+
+Note: the word timing map is a proportional estimate based on audio duration, not forced-alignment phoneme timing. It prevents the pipeline failure and keeps all words within the generated narration duration.
