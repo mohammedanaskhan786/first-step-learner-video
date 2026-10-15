@@ -9,10 +9,20 @@ INPUT_FILE = ROOT / "narration.txt"
 OUTPUT_FILE = ROOT / "generated" / "story.json"
 
 
+def strip_speaker_labels(text: str) -> str:
+    """Remove optional voice labels so they never become spoken/timed words."""
+    cleaned = []
+    for line in text.splitlines():
+        line = re.sub(r"^\s*(?:\[[A-Z][A-Z _-]*\]|[A-Z][A-Z _-]{1,24}:)\s*", "", line)
+        cleaned.append(line)
+    return "\n".join(cleaned)
+
+
 def split_sentences(text: str):
     """
     Split narration into readable sentences.
     """
+    text = strip_speaker_labels(text)
     sentences = re.split(
         r"(?<=[.!?])\s+",
         text.strip(),
